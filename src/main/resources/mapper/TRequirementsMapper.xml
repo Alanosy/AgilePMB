@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TRequirementsMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TRequirements">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+            <result property="priority" column="priority" jdbcType="VARCHAR"/>
+            <result property="plantime" column="plantime" jdbcType="TIMESTAMP"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,content,
+        userid,priority,plantime,
+        createtime
+    </sql>
+</mapper>
