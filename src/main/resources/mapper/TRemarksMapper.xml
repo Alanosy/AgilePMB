@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TRemarksMapper">
+
+    <select id="getRemark" resultType="cn.org.alan.agile.model.vo.project.RemarkGetVo">
+
+
+    SELECT re.content,u.realname as userName
+    FROM T_Remarks re
+    LEFT JOIN T_Users u ON u.id = re.userid
+    WHERE re.itemid = #{itemId}
+    </select>
+</mapper>

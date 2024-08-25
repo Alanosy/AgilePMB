@@ -5,6 +5,7 @@ import cn.org.alan.agile.converter.TTasksConverter;
 import cn.org.alan.agile.mapper.TTasksMapper;
 import cn.org.alan.agile.model.entity.TTasks;
 import cn.org.alan.agile.model.form.task.TaskSaveForm;
+import cn.org.alan.agile.model.vo.task.TaskBoardGetVo;
 import cn.org.alan.agile.model.vo.task.TaskGetVo;
 import cn.org.alan.agile.model.vo.task.WeekTaskGetVo;
 import cn.org.alan.agile.util.SecurityUtil;
@@ -89,7 +90,16 @@ public class TTaskIssueServiceImpl extends ServiceImpl<TTaskIssueMapper, TTaskIs
         return Result.success("请求成功",weekTaskGetVos);
     }
 
+    @Override
+    public Result getTaskBoard() {
 
+        List<List<TaskBoardGetVo>> taskResult = new ArrayList<>();
+        for(int i=0;i<3;i++) {
+            List<TaskBoardGetVo> result = tTasksMapper.getTaskBoard(i,SecurityUtil.getUserId(),SecurityUtil.getTeamId());
+            taskResult.add(result);
+        }
+        return Result.success("请求成功",taskResult);
+    }
 
 
     private static List<LocalDate> getDatesOfThisWeek() {

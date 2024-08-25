@@ -70,5 +70,12 @@ public class TaskController {
         return result;
     }
 
+    @GetMapping("/taskBoard")
+    public Result getTaskBoard(){
+        Result  result = tTaskIssueService.getTaskBoard();
+        return result;
+    }
+
+
 
 }

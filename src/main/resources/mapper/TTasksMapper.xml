@@ -71,4 +71,13 @@
         DATE(t.endtime) = DATE(#{date});
 
     </select>
+    <select id="getTaskBoard" resultType="cn.org.alan.agile.model.vo.task.TaskBoardGetVo">
+
+        SELECT t.id,t.`name` as taskName,t.content,t.type,t.createtime,t.priority,t.userid,t.itemid,t.principalid,t.state,t.starttime,t.endtime,t.updatetime,t.finishtime,t.teamid,u.realname as pName
+        FROM T_Tasks t
+        LEFT JOIN T_Users u ON u.id = t.principalid
+        WHERE t.state = #{state} and t.principalid = #{userId} and t.itemid in
+        (SELECT tp.pid FROM T_Team_Project tp WHERE tp.tid = #{teamId})
+
+    </select>
 </mapper>

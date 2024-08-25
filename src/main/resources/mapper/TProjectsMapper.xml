@@ -43,6 +43,32 @@
         select id ,name
         from T_Projects
     </select>
+    <select id="getOverviewItem" resultType="cn.org.alan.agile.model.vo.project.OverviewItemGetVo">
+
+        SELECT
+        p.`name` AS itemName,
+        u.realname AS userName,
+        p.state AS state,
+        (SELECT COUNT(*) FROM T_Requirements r WHERE r.itemid = p.id) AS reqNum,
+        (SELECT COUNT(*) FROM T_Requirements r WHERE r.itemid = p.id AND r.state = 6 ) AS reqfNum,
+        (SELECT COUNT(*) FROM T_Issues i WHERE i.itemid = p.id  ) AS issueNum,
+        (SELECT COUNT(*) FROM T_Issues i WHERE i.itemid = p.id AND i.state IN (3, 6) ) AS issuefNum,
+        (SELECT COUNT(*) FROM T_Tasks t WHERE t.itemid = p.id  ) AS taskNum,
+        (SELECT COUNT(*) FROM T_Tasks t WHERE t.itemid = p.id AND t.state = 2 ) AS taskfNum
+        FROM
+        T_Projects p
+        LEFT JOIN
+        T_Users u ON u.id = p.userid
+        WHERE
+        p.id = #{itemId}
+
+    </select>
+    <select id="getItemContent" resultType="cn.org.alan.agile.model.vo.project.ItemContentGetVo">
+
+        select p.content
+        from T_Projects p
+        where p.id = #{itemId}
+    </select>
 
 
 </mapper>

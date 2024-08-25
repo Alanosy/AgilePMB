@@ -19,4 +19,6 @@ public interface TTaskIssueService extends IService<TTaskIssue> {
     Result<String> delTask(Long taskId);
 
     Result getWeekTask();
+
+    Result getTaskBoard();
 }

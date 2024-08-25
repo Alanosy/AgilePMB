@@ -1,6 +1,7 @@
 package cn.org.alan.agile.mapper;
 
 import cn.org.alan.agile.model.entity.TTasks;
+import cn.org.alan.agile.model.vo.task.TaskBoardGetVo;
 import cn.org.alan.agile.model.vo.task.TaskGetVo;
 import cn.org.alan.agile.model.vo.task.WeekTaskGetVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -20,6 +21,8 @@ public interface TTasksMapper extends BaseMapper<TTasks> {
     Page<TaskGetVo> getTask(Page<TTasks> page, String type, Integer itemId, Long userId, Long teamId);
 
     List<WeekTaskGetVo> getWeekTask(LocalDate date);
+
+    List<TaskBoardGetVo> getTaskBoard(int state, Long userId, Long teamId);
 
     // List<String> getWeekTask();
 }

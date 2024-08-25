@@ -1,6 +1,8 @@
 package cn.org.alan.agile.mapper;
 
 import cn.org.alan.agile.model.entity.TProjects;
+import cn.org.alan.agile.model.vo.project.ItemContentGetVo;
+import cn.org.alan.agile.model.vo.project.OverviewItemGetVo;
 import cn.org.alan.agile.model.vo.project.ProjectPageVo;
 import cn.org.alan.agile.model.vo.project.fetchProjectsVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -19,6 +21,10 @@ public interface TProjectsMapper extends BaseMapper<TProjects> {
     IPage<ProjectPageVo> selectProject(IPage<ProjectPageVo> page, String itemName, Long teamId, Integer type, Long userId);
 
     List<fetchProjectsVo> fetchProjects();
+
+    OverviewItemGetVo getOverviewItem(Long itemId);
+
+    ItemContentGetVo getItemContent(Long itemId);
 }
 
 

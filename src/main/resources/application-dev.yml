@@ -104,8 +104,8 @@ jwt:
 
 oss:
   endpoint: https://oss-cn-beijing.aliyuncs.com"
-  access-key-id: LTAI5tGaZUEhWr9Jg3EUC9FQ
-  access-key-secret: 4hFcObCh2ArA0wZZYbBP9mRy4BD2NO
+  access-key-id: LTAI5tBaRtzUvGxonrLDM1Lj
+  access-key-secret: coMqx1dK3bTmrNzZn7JjaaMMorriTO
   bucket-name: online-exam-system-backend
 
 logging:

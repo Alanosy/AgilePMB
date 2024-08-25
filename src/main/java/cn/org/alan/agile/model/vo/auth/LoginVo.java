@@ -45,4 +45,8 @@ public class LoginVo {
      * 角色
      */
     private String role;
+    /**
+     * 头像
+     */
+    private String avater;
 }
