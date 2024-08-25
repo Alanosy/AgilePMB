@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TRequirementsMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TRequirements">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+            <result property="priority" column="priority" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,content,
+        userid,priority,plantime,
+        createtime
+    </sql>
+    <select id="getReq" resultType="cn.org.alan.agile.model.vo.requirement.ReqGetVo">
+        SELECT r.id,r.priority,r.`name` as reqname,p.`name` as itemname,r.state,r.starttime,r.endtime,u.realname,r.content,
+        r.principalid,u2.realname as createName,r.createtime
+        FROM T_Requirements r
+        LEFT JOIN T_Projects p ON p.id = r.itemid
+        LEFT JOIN T_Users u ON u.id = r.principalid
+        LEFT JOIN T_Users u2 ON u2.id = r.userid
+        <trim prefixOverrides="and" prefix="where">
+            r.teamid = #{teamId}
+            <if test='type==1 and type!=null and type!=""'>
+                and r.principalid = #{userId}
+            </if>
+            <if test='type==2 and type!=null and type!=""'>
+                and r.userid = #{userId}
+            </if>
+            <if test='type==3 and type!=null and type!=""'>
+                and r.endtime IS NULL OR r.endtime &lt; now()
+            </if>
+            <if test='itemId!=null and itemId!=""'>
+                and r.itemId = #{itemId}
+            </if>
+        </trim>
+    </select>
+</mapper>

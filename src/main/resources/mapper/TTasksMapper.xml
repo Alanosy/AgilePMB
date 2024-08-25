@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TTasksMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TTasks">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="plantime" column="plantime" jdbcType="TIMESTAMP"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+            <result property="priority" column="priority" jdbcType="VARCHAR"/>
+            <result property="evaluation" column="evaluation" jdbcType="VARCHAR"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,content,
+        plantime,type,createtime,
+        priority,evaluation,userid
+    </sql>
+    <select id="getTask" resultType="cn.org.alan.agile.model.vo.task.TaskGetVo">
+        SELECT t.id,t.state,t.`name` as taskName,u.realname as principalName,t.endtime,t.finishtime,t.updatetime,t.createtime,t.content
+        FROM T_Tasks t
+        LEFT JOIN T_Users u ON u.id=t.principalid
+        LEFT JOIN T_Projects p ON p.id=t.itemid
+        <trim prefixOverrides="and" prefix="where">
+            t.teamid = #{teamId}
+        </trim>
+    </select>
+    <select id="getWeekTask" resultType="cn.org.alan.agile.model.vo.task.WeekTaskGetVo">
+
+        <!--    SELECT t.id,t.name as taskName,t.content,t.type,t.createtime,t.starttime,t.endtime,-->
+        <!--t.updatetime,t.finishtime,t.state,t.priority,t.evaluation,t.userid,t.principalid,t.itemid,t.teamid,p.name as itemName,-->
+
+        <!--    FROM T_Tasks t-->
+        <!--    LEFT JOIN T_Projects p ON p.id=t.itemid-->
+        <!--    WHERE DATE(t.endtime) = DATE(#{date})-->
+        SELECT
+        t.id,
+        t.name AS taskName,
+        t.content,
+        t.type,
+        t.createtime,
+        t.starttime,
+        t.endtime,
+        t.updatetime,
+        t.finishtime,
+        t.state,
+        t.priority,
+        t.evaluation,
+        t.userid,
+        t.principalid,
+        t.itemid,
+        t.teamid,
+        p.name AS itemName,
+        CASE
+        WHEN t.finishtime IS NULL AND CURRENT_DATE &gt; DATE(t.endtime) THEN 1
+        WHEN t.finishtime IS NULL AND CURRENT_DATE &lt;= DATE(t.endtime) THEN 0
+        WHEN t.finishtime IS NOT NULL AND t.finishtime &gt; t.endtime THEN 2
+        WHEN t.finishtime IS NOT NULL AND t.finishtime &lt; t.endtime THEN 3
+        ELSE -1 -- 这里可以设置一个默认值，表示不符合以上条件的情况
+        END AS isLeaveOver
+        FROM
+        T_Tasks t
+        LEFT JOIN
+        T_Projects p ON p.id = t.itemid
+        WHERE
+        DATE(t.endtime) = DATE(#{date});
+
+    </select>
+</mapper>

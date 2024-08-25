@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TProjectsMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TProjects">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,content,
+        createtime,userid
+    </sql>
+    <select id="selectProject" resultType="cn.org.alan.agile.model.vo.project.ProjectPageVo">
+        select p.id,p.`name`,p.state,
+        (SELECT count(*) from T_Requirements r WHERE r.itemid=p.id)as reqcount,
+        (SELECT count(*) from T_Issues i WHERE i.itemid=p.id)as issuecount,
+        (SELECT count(*) from T_Tasks t WHERE t.itemid=p.id)as taskcount,
+        (SELECT u.realname from T_Users u WHERE u.id=p.userid) as username
+        from T_Projects p
+        <trim prefixOverrides="and" prefix="where">
+            p.teamid = #{teamId}
+            <if test='itemName!=null and itemName!=""'>
+                and p.name LIKE CONCAT('%', #{itemName}, '%')
+            </if>
+            <if test='type==1 and type!=null and type!=""'>
+                and p.userid != #{userId}
+            </if>
+            <if test='type==2 and type!=null and type!=""'>
+                and p.userid = #{userId}
+            </if>
+
+        </trim>
+
+    </select>
+    <select id="fetchProjects" resultType="cn.org.alan.agile.model.vo.project.fetchProjectsVo">
+
+        select id ,name
+        from T_Projects
+    </select>
+
+
+</mapper>

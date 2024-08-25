@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TDashboardMapper">
+
+    <select id="getCount" resultType="cn.org.alan.agile.model.vo.dashboard.DashBoardCountVo">
+        SELECT
+        (SELECT COUNT(*) FROM T_User_Team ut WHERE ut.tid = #{teamId}) AS "projectCount",
+        (SELECT COUNT(*) FROM T_Tasks WHERE principalid = #{userId}) AS "taskCount",
+        (SELECT COUNT(*) FROM T_Requirements r WHERE r.principalid = #{userId}) AS "requirementCount",
+        (SELECT COUNT(*) FROM T_Issues i WHERE i.principalid = #{userId}) AS "issueCount"
+
+    </select>
+</mapper>

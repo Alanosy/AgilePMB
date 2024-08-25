@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TIssuesMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TIssues">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+            <result property="priority" column="priority" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,type,
+        content,createtime,priority
+    </sql>
+    <select id="getIssue" resultType="cn.org.alan.agile.model.vo.issue.IssuesGetVo">
+        SELECT i.id, i.type,i.`name` as issueName,i.priority,i.state,u.realname  as principalName,i.createtime,p.`name` as itemName,
+        i.content,i.principalid,u2.realname as createName
+        FROM T_Issues i
+        LEFT JOIN T_Users u ON u.id = i.principalid
+        LEFT JOIN T_Users u2 ON u2.id = i.userid
+        LEFT JOIN T_Projects p ON p.id = i.itemid
+        <trim prefixOverrides="and" prefix="where">
+            i.teamid = #{teamId}
+            <if test='type==1 and type!=null and type!=""'>
+                and i.principalid = #{userId}
+            </if>
+            <if test='type==2 and type!=null and type!=""'>
+                and i.userId = #{userId}
+            </if>
+            <if test='issueType!=null and issueType!=""'>
+                and i.type = #{issueType}
+            </if>
+            <if test='itemId!=null and itemId!=""'>
+                and i.itemId = #{itemId}
+            </if>
+        </trim>
+
+    </select>
+</mapper>

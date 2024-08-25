@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TUsersMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TUsers">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="realname" column="realname" jdbcType="VARCHAR"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,realname,username,
+        password,createtime
+    </sql>
+    <select id="fetchUsers" resultType="cn.org.alan.agile.model.vo.user.fetchUsersVo">
+        select id ,realname as name
+        from T_Users
+    </select>
+    <select id="getMyselfData" resultType="cn.org.alan.agile.model.vo.user.MyselfDataGetVo">
+        SELECT u.realname as realName,u.username as userName,(select te.`name` from T_Teams te where te.id = #{teamId}) as teamName,u.avater
+        FROM T_Users u
+        WHERE
+        u.id = #{userId}
+
+
+    </select>
+</mapper>

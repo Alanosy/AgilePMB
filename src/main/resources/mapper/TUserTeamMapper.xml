@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.alan.agile.mapper.TUserTeamMapper">
+
+    <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TUserTeam">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tid" column="tid" jdbcType="BIGINT"/>
+            <result property="uid" column="uid" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,tid,uid
+    </sql>
+    <update id="cutTeam">
+
+        UPDATE T_User_Team ue
+        SET ue.state = CASE
+        WHEN ue.tid = #{teamId} THEN 0
+        WHEN ue.tid = #{cutTeamId} THEN 1
+        ELSE ue.state
+        END
+        WHERE ue.tid IN (#{teamId}, #{cutTeamId})
+
+    </update>
+    <select id="getTeamPage" resultType="cn.org.alan.agile.model.vo.team.TeamGetVo">
+        SELECT te.id,te.`name`,te.`code`,te.createtime
+        FROM T_Teams te
+        <trim prefix="where"  prefixOverrides="and">
+            te.userid = #{userId}
+            <if test='teamName!=null and teamName!=""'>
+               and te.name like concat('%',#{teamName},'%')
+            </if>
+        </trim>
+    </select>
+    <select id="getTeamUserPage" resultType="cn.org.alan.agile.model.vo.team.TeamUserGetVo">
+        SELECT ut.id,u.realname,ut.createtime,ut.state as role
+        FROM T_User_Team ut
+        LEFT JOIN T_Users u ON u.id = ut.uid
+        <trim prefix="where"  prefixOverrides="and">
+            ut.state in (0,1)
+            <if test='realName!=null and realName!=""'>
+                and u.realname like concat('%',#{realName},'%')
+            </if>
+        </trim>
+    </select>
+</mapper>
