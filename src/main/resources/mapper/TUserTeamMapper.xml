@@ -13,24 +13,35 @@
     <sql id="Base_Column_List">
         id,tid,uid
     </sql>
-    <update id="cutTeam">
+    <!--<update id="cutTeam">-->
 
-        UPDATE T_User_Team ue
-        SET ue.state = CASE
-        WHEN ue.tid = #{teamId} THEN 0
-        WHEN ue.tid = #{cutTeamId} THEN 1
-        ELSE ue.state
-        END
-        WHERE ue.tid IN (#{teamId}, #{cutTeamId})
+    <!--    UPDATE T_User_Team ue-->
+    <!--    SET ue.state = CASE-->
+    <!--    WHEN ue.tid = #{teamId} THEN 0-->
+    <!--    WHEN ue.tid = #{cutTeamId} THEN 1-->
+    <!--    ELSE ue.state-->
+    <!--    END-->
+    <!--    WHERE ue.tid IN (#{teamId}, #{cutTeamId})-->
+
+    <!--</update>-->
+    <update id="applyCheck">
+        update T_User_Team ut
+        set ut.state=#{state}
+        where ut.uid=#{userId} and ut.tid = #{teamId}
+
 
     </update>
     <select id="getTeamPage" resultType="cn.org.alan.agile.model.vo.team.TeamGetVo">
-        SELECT te.id,te.`name`,te.`code`,te.createtime
-        FROM T_Teams te
+        SELECT te.`name`,te.id,te.`code`,ut.state,te.createtime
+        FROM T_User_Team ut
+        LEFT JOIN T_Teams te ON te.id = ut.tid
         <trim prefix="where"  prefixOverrides="and">
-            te.userid = #{userId}
+            ut.uid = #{userId}
             <if test='teamName!=null and teamName!=""'>
                and te.name like concat('%',#{teamName},'%')
+            </if>
+            <if test='type=="1" and type!=null and type!=""'>
+                and te.userid = #{userId}
             </if>
         </trim>
     </select>
@@ -44,5 +55,15 @@
                 and u.realname like concat('%',#{realName},'%')
             </if>
         </trim>
+    </select>
+    <select id="getApplyTeamPage" resultType="cn.org.alan.agile.model.vo.team.ApplyTeamGetVo">
+
+        SELECT u.id,u.realname as realName, u.username,ut.createtime,ut.tid as teamId
+        FROM T_User_Team ut
+        LEFT JOIN T_Users u ON ut.uid = u.id
+        WHERE ut.state = 2 and ut.tid = #{teamId}
+        <if test='userName!=null and userName!=""'>
+            and u.realname like concat('%',#{userName},'%')
+        </if>
     </select>
 </mapper>

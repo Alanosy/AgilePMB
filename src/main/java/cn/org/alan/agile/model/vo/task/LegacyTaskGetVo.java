@@ -1,6 +1,5 @@
 package cn.org.alan.agile.model.vo.task;
 
-import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -8,10 +7,10 @@ import java.util.Date;
 /**
  * @Author Alan
  * @Version
- * @Date 2024/8/24 10:48 PM
+ * @Date 2024/8/26 8:17 PM
  */
 @Data
-public class WeekTaskGetVo {
+public class LegacyTaskGetVo {
     /**
      * 主键
      */
@@ -94,5 +93,4 @@ public class WeekTaskGetVo {
      */
     private String isLeaveOver;
     private String createName;
-
 }

@@ -2,6 +2,7 @@ package cn.org.alan.agile.model.form.issue;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -12,30 +13,41 @@ import java.util.Date;
  */
 @Data
 public class IssueSaveForm {
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 问题名称
      */
     private String name;
 
+    private Long principalId;
+    private Long itemId;
     /**
      * 类型
      */
     private String type;
 
     /**
+     * 类型
+     */
+    private String state;
+
+    /**
      * 问题内容
      */
     private String content;
 
+
     /**
-     * 创建时间
+     * 计划时间
      */
-    private Date createtime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date startDate;
+
+    /**
+     * 计划时间
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date endDate;
 
     /**
      * 优先级

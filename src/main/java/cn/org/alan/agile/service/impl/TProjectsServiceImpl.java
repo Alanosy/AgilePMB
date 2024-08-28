@@ -7,6 +7,7 @@ import cn.org.alan.agile.model.entity.TFiles;
 import cn.org.alan.agile.model.entity.TRemarks;
 import cn.org.alan.agile.model.form.project.ItemContentUpdateForm;
 import cn.org.alan.agile.model.form.project.ProjectSaveForm;
+import cn.org.alan.agile.model.form.project.ProjectUpdateForm;
 import cn.org.alan.agile.model.form.project.RemarkSaveForm;
 import cn.org.alan.agile.model.vo.project.*;
 import cn.org.alan.agile.util.AliOSSUtil;
@@ -67,7 +68,7 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
 
     @Override
     public List<fetchProjectsVo> fetchProjects() {
-        List<fetchProjectsVo> projectsVoList = tProjectsMapper.fetchProjects();
+        List<fetchProjectsVo> projectsVoList = tProjectsMapper.fetchProjects(SecurityUtil.getTeamId());
         return projectsVoList;
     }
 
@@ -166,6 +167,12 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
     @Override
     public Result getFileList(Long itemId) {
         List<FileListGetVo> result = tFilesMapper.getFileList(itemId);
+        return Result.success("请求成功",result);
+    }
+
+    @Override
+    public Result updateProject(ProjectUpdateForm projectUpdateForm) {
+        Integer result = tFilesMapper.updateProject(projectUpdateForm);
         return Result.success("请求成功",result);
     }
 }

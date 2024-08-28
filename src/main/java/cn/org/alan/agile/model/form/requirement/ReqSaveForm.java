@@ -2,8 +2,10 @@ package cn.org.alan.agile.model.form.requirement;
 
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -13,15 +15,17 @@ import java.util.Date;
  */
 @Data
 public class ReqSaveForm {
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 需求名称
      */
     private String name;
+
+
+    /**
+     * 状态
+     */
+    private String state;
 
     /**
      * 需求文档
@@ -31,7 +35,12 @@ public class ReqSaveForm {
     /**
      * 创建人
      */
-    private Long userid;
+    private Long principalId;
+
+    /**
+     * 创建人
+     */
+    private Long itemId;
 
     /**
      * 优先级
@@ -41,12 +50,15 @@ public class ReqSaveForm {
     /**
      * 计划时间
      */
-    private Date plantime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date startDate;
 
     /**
-     * 创建时间
+     * 计划时间
      */
-    private Date createtime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date endDate;
+
 
 
 }

@@ -4,6 +4,7 @@ package cn.org.alan.agile.controller;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.form.auth.LoginForm;
 import cn.org.alan.agile.model.form.user.UserForm;
+import cn.org.alan.agile.model.vo.auth.AuthLoginVo;
 import cn.org.alan.agile.service.IAuthService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,8 @@ public class AuthController {
      * @return
      */
     @PostMapping("/login")
-    public Result<String> login(HttpServletRequest request,
-                                @Validated @RequestBody LoginForm loginForm) {
+    public Result<AuthLoginVo> login(HttpServletRequest request,
+                                     @Validated @RequestBody LoginForm loginForm) {
 
         return iAuthService.login(request,loginForm);
     }

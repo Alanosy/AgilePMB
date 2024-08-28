@@ -3,6 +3,7 @@ package cn.org.alan.agile.controller;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.form.project.ItemContentUpdateForm;
 import cn.org.alan.agile.model.form.project.ProjectSaveForm;
+import cn.org.alan.agile.model.form.project.ProjectUpdateForm;
 import cn.org.alan.agile.model.form.project.RemarkSaveForm;
 import cn.org.alan.agile.model.vo.project.ProjectPageVo;
 import cn.org.alan.agile.model.vo.project.fetchProjectsVo;
@@ -105,6 +106,11 @@ public class ProjectController {
     @GetMapping("/file-list")
     public Result getFileList(@RequestParam(value = "itemId",required = false) Long itemId){
         Result result = tProjectsService.getFileList(itemId);
+        return result;
+    }
+    @PutMapping
+    public Result updateProject(@RequestBody ProjectUpdateForm projectUpdateForm){
+        Result result = tProjectsService.updateProject(projectUpdateForm);
         return result;
     }
 }

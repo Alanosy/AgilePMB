@@ -1,6 +1,7 @@
 package cn.org.alan.agile.controller;
 
 import cn.org.alan.agile.common.result.Result;
+import cn.org.alan.agile.model.form.team.ApplyCheckForm;
 import cn.org.alan.agile.model.form.team.CutTeamForm;
 import cn.org.alan.agile.model.form.team.TeamAddForm;
 import cn.org.alan.agile.model.form.team.TeamSaveForm;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Author Alan
@@ -52,8 +54,9 @@ public class TeamController {
     @GetMapping
     public Result getTeamPage(@RequestParam(value = "pageNum",required = false, defaultValue = "1") Integer pageNum,
                                                     @RequestParam(value = "pageSize",required = false, defaultValue = "10") Integer pageSize,
-                                                    @RequestParam(value = "teamName",required = false) String teamName){
-        Result itemPage = tTeamsService.getTeamPage(pageNum,pageSize,teamName);
+                                                    @RequestParam(value = "teamName",required = false) String teamName,
+                                                     @RequestParam(value = "type",required = false) String type){
+        Result itemPage = tTeamsService.getTeamPage(pageNum,pageSize,teamName,type);
         return itemPage;
     }
 
@@ -77,8 +80,34 @@ public class TeamController {
      * @return
      */
     @PutMapping("/cut")
-    public Result cutTeam(@RequestBody CutTeamForm cutTeamForm){
-        Result result = tTeamsService.cutTeam(cutTeamForm);
+    public Result cutTeam(HttpServletRequest request, @RequestBody CutTeamForm cutTeamForm){
+        Result result = tTeamsService.cutTeam(request,cutTeamForm);
+        return result;
+    }
+
+    /**
+     * 入团申请分页查询
+     * @param pageNum
+     * @param pageSize
+     * @param userName
+     * @return
+     */
+    @GetMapping("/apply")
+    public Result getApplyTeamPage(@RequestParam(value = "pageNum",required = false, defaultValue = "1") Integer pageNum,
+                              @RequestParam(value = "pageSize",required = false, defaultValue = "10") Integer pageSize,
+                              @RequestParam(value = "userName",required = false) String userName){
+        Result result = tTeamsService.getApplyTeamPage(pageNum,pageSize,userName);
+        return result;
+    }
+
+    /**
+     * 入团申请审核
+     * @param applyCheckForm
+     * @return
+     */
+    @GetMapping("/applyCheck")
+    public Result applyCheck(@RequestBody ApplyCheckForm applyCheckForm){
+        Result result = tTeamsService.applyCheck(applyCheckForm);
         return result;
     }
 }

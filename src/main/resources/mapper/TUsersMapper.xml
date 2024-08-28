@@ -17,8 +17,10 @@
         password,createtime
     </sql>
     <select id="fetchUsers" resultType="cn.org.alan.agile.model.vo.user.fetchUsersVo">
-        select id ,realname as name
-        from T_Users
+        select u.id ,u.realname as name
+        from T_Users u
+        where  u.id in (select ut.uid from T_User_Team ut where ut.tid = #{teamId})
+
     </select>
     <select id="getMyselfData" resultType="cn.org.alan.agile.model.vo.user.MyselfDataGetVo">
         SELECT u.realname as realName,u.username as userName,(select te.`name` from T_Teams te where te.id = #{teamId}) as teamName,u.avater

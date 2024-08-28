@@ -20,6 +20,15 @@ public class TIssues implements Serializable {
     private Long id;
 
     /**
+     * 计划开始时间
+     */
+    private Date startdate;
+
+    /**
+     * 计划开始时间
+     */
+    private Date enddate;
+    /**
      * 创建人id
      */
     private Long userid;

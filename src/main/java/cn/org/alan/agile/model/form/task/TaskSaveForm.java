@@ -13,11 +13,6 @@ import java.util.Date;
  */
 @Data
 public class TaskSaveForm {
-    /**
-     * 主键
-     */
-
-    private Long id;
 
     /**
      * 任务名称
@@ -29,35 +24,35 @@ public class TaskSaveForm {
      */
     private String content;
 
-    /**
-     * 计划时间
-     */
-    private Date plantime;
+
 
     /**
      * 类型
      */
-    private String type;
+    private String state;
 
     /**
      * 创建时间
      */
-    private Date createtime;
-
+    private Date startDate;
     /**
-     * 优先级
+     * 创建时间
      */
-    private String priority;
+    private Date endDate;
 
-    /**
-     * 评估时间
-     */
-    private String evaluation;
+
+
+
 
     /**
      * 创建人
      */
-    private Long userid;
+    private Long principalId;
+
+    /**
+     * 创建人
+     */
+    private Long itemId;
 
 
 

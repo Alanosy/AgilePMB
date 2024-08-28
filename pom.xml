@@ -75,7 +75,19 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
+        <!-- MyBatis Plus 核心依赖 -->
+        <!--<dependency>-->
+        <!--    <groupId>com.baomidou</groupId>-->
+        <!--    <artifactId>mybatis-plus-core</artifactId>-->
+        <!--    <version>3.5.3</version>-->
+        <!--</dependency>-->
 
+        <!-- MyBatis Plus 分页插件 -->
+        <!--<dependency>-->
+        <!--    <groupId>com.baomidou</groupId>-->
+        <!--    <artifactId>mybatis-plus-extension</artifactId>-->
+        <!--    <version>3.5.3</version>-->
+        <!--</dependency>-->
         <!-- 阿里巴巴数据库连接池 -->
         <dependency>
             <groupId>com.alibaba</groupId>

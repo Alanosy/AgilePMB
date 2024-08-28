@@ -20,7 +20,7 @@ public interface TProjectsMapper extends BaseMapper<TProjects> {
 
     IPage<ProjectPageVo> selectProject(IPage<ProjectPageVo> page, String itemName, Long teamId, Integer type, Long userId);
 
-    List<fetchProjectsVo> fetchProjects();
+    List<fetchProjectsVo> fetchProjects(Long teamId);
 
     OverviewItemGetVo getOverviewItem(Long itemId);
 

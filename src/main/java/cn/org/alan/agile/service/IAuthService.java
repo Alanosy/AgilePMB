@@ -3,6 +3,7 @@ package cn.org.alan.agile.service;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.form.auth.LoginForm;
 import cn.org.alan.agile.model.form.user.UserForm;
+import cn.org.alan.agile.model.vo.auth.AuthLoginVo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,7 @@ public interface IAuthService {
      * @param loginForm
      * @return
      */
-    Result<String> login(HttpServletRequest request, LoginForm loginForm);
+    Result<AuthLoginVo> login(HttpServletRequest request, LoginForm loginForm);
 
     /**
      * 用户注销

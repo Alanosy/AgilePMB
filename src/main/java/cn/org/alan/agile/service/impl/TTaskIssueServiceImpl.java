@@ -5,6 +5,7 @@ import cn.org.alan.agile.converter.TTasksConverter;
 import cn.org.alan.agile.mapper.TTasksMapper;
 import cn.org.alan.agile.model.entity.TTasks;
 import cn.org.alan.agile.model.form.task.TaskSaveForm;
+import cn.org.alan.agile.model.vo.task.LegacyTaskGetVo;
 import cn.org.alan.agile.model.vo.task.TaskBoardGetVo;
 import cn.org.alan.agile.model.vo.task.TaskGetVo;
 import cn.org.alan.agile.model.vo.task.WeekTaskGetVo;
@@ -43,11 +44,13 @@ public class TTaskIssueServiceImpl extends ServiceImpl<TTaskIssueMapper, TTaskIs
 
         TTasks tTasks = new TTasks();
         tTasks.setContent(taskSaveForm.getContent());
+        tTasks.setUserid(SecurityUtil.getUserId());
         tTasks.setName(taskSaveForm.getName());
-        tTasks.setPriority(taskSaveForm.getPriority());
-        tTasks.setType(taskSaveForm.getType());
-        tTasks.setUserid(1L);
-        tTasks.setTeamid(SecurityUtil.getTeamId());
+        tTasks.setPrincipalid(taskSaveForm.getPrincipalId());
+        tTasks.setStarttime(taskSaveForm.getStartDate());
+        tTasks.setEndtime(taskSaveForm.getEndDate());
+        tTasks.setState(taskSaveForm.getState());
+        tTasks.setItemid(taskSaveForm.getItemId());
         int insert = tTasksMapper.insert(tTasks);
         if(insert>0){
             return Result.success("保存成功");
@@ -84,7 +87,7 @@ public class TTaskIssueServiceImpl extends ServiceImpl<TTaskIssueMapper, TTaskIs
         List<List<WeekTaskGetVo>> weekTaskGetVos = new ArrayList<>();
         List<LocalDate> datesOfThisWeek = getDatesOfThisWeek();
         for (LocalDate date : datesOfThisWeek) {
-            List<WeekTaskGetVo> result = tTasksMapper.getWeekTask(date);
+            List<WeekTaskGetVo> result = tTasksMapper.getWeekTask(date,SecurityUtil.getUserId(),SecurityUtil.getTeamId());
             weekTaskGetVos.add(result);
         }
         return Result.success("请求成功",weekTaskGetVos);
@@ -99,6 +102,12 @@ public class TTaskIssueServiceImpl extends ServiceImpl<TTaskIssueMapper, TTaskIs
             taskResult.add(result);
         }
         return Result.success("请求成功",taskResult);
+    }
+
+    @Override
+    public Result getLegacyTask() {
+        List<LegacyTaskGetVo> result = tTasksMapper.getLegacyTask(SecurityUtil.getUserId(),SecurityUtil.getTeamId());
+        return  Result.success("请求成功",result);
     }
 
 

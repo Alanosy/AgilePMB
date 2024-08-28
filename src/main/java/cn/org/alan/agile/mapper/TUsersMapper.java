@@ -1,6 +1,5 @@
 package cn.org.alan.agile.mapper;
 
-import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.entity.TUsers;
 import cn.org.alan.agile.model.vo.user.MyselfDataGetVo;
 import cn.org.alan.agile.model.vo.user.fetchUsersVo;
@@ -16,7 +15,7 @@ import java.util.List;
 */
 public interface TUsersMapper extends BaseMapper<TUsers> {
 
-    List<fetchUsersVo> fetchUsers();
+    List<fetchUsersVo> fetchUsers(Long teamId);
 
     MyselfDataGetVo getMyselfData(Long userId, Long teamId);
 }

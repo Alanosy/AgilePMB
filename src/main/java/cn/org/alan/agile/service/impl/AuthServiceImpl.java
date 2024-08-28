@@ -14,6 +14,7 @@ import cn.org.alan.agile.model.entity.TUserTeam;
 import cn.org.alan.agile.model.entity.TUsers;
 import cn.org.alan.agile.model.form.auth.LoginForm;
 import cn.org.alan.agile.model.form.user.UserForm;
+import cn.org.alan.agile.model.vo.auth.AuthLoginVo;
 import cn.org.alan.agile.model.vo.auth.LoginVo;
 import cn.org.alan.agile.model.vo.user.registerVo;
 import cn.org.alan.agile.security.SysUserDetails;
@@ -87,7 +88,7 @@ public class AuthServiceImpl implements IAuthService {
      */
     @SneakyThrows(JsonProcessingException.class)
     @Override
-    public Result<String> login(HttpServletRequest request, LoginForm loginForm) {
+    public Result<AuthLoginVo> login(HttpServletRequest request, LoginForm loginForm) {
         // 先判断用户是否通过校验
         String s = stringRedisTemplate.opsForValue().get("isVerifyCode" + request.getSession().getId());
         if (StringUtils.isBlank(s)) {
@@ -97,14 +98,10 @@ public class AuthServiceImpl implements IAuthService {
         LambdaQueryWrapper<TUsers> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TUsers::getUsername, loginForm.getUsername());
         TUsers user = tUsersMapper.selectOne(wrapper);
-
         // 判读用户名是否存在
         if (Objects.isNull(user)) {
             throw new UsernameNotFoundException("该用户不存在");
         }
-        // if(user.getIsDeleted() == 1){
-        //     return Result.failed("该用户已注销");
-        // }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (!encoder.matches(loginForm.getPassword(), user.getPassword())) {
             return Result.failed("密码错误");
@@ -115,35 +112,61 @@ public class AuthServiceImpl implements IAuthService {
         // 创建一个sysUserDetails对象，该类实现了UserDetails接口
         SysUserDetails sysUserDetails = new SysUserDetails(user);
         // // 把转型后的权限放进sysUserDetails对象
-        // sysUserDetails.setPermissions(userPermissions);
-        LoginVo loginVo = authConverter.entityToEV(user);
-        LambdaQueryWrapper<TUserTeam> tUserTeamLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        tUserTeamLambdaQueryWrapper.eq(TUserTeam::getUid,user.getId())
-                .eq(TUserTeam::getState,1);
-        TUserTeam tUserTeam = tUserTeamMapper.selectOne(tUserTeamLambdaQueryWrapper);
-        loginVo.setTeamId(tUserTeam.getTid());
 
-        LambdaQueryWrapper<TTeams> tTeamsLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        tTeamsLambdaQueryWrapper.eq(TTeams::getId,tUserTeam.getTid());
-        TTeams tTeams = tTeamsMapper.selectOne(tTeamsLambdaQueryWrapper);
-        if(tTeams.getUserid().equals(user.getId())){
-            loginVo.setRole("admin");
+        LoginVo loginVo = authConverter.entityToEV(user);
+        /**
+         * 查询是否加有有关联团队
+         */
+        LambdaQueryWrapper<TUserTeam> tUserTeamLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        tUserTeamLambdaQueryWrapper.eq(TUserTeam::getUid,user.getId());
+        List<TUserTeam> tUserTeams = tUserTeamMapper.selectList(tUserTeamLambdaQueryWrapper);
+        Integer teamState = null;
+        TUserTeam tUserTeam = new TUserTeam();
+        if(tUserTeams.size()==0){
+            // 只注册了账号，没有加入、创建团队
+            teamState=0;
+        }else if(tUserTeams.equals(1)){
+            tUserTeam = tUserTeams.get(0);
+            if(tUserTeam.getState().equals(1)){
+                // 只有一个团队，刚好是当前团队
+                teamState=1;
+
+            }else if(tUserTeam.getState().equals(2)){
+                // 只有一个团队，是申请加入团队，还没同意
+                teamState=2;
+            } else if(tUserTeam.getState().equals(3)){
+                // 只有一个团队，是申请加入团队，被拒绝
+                teamState=3;
+            }
         }else{
-            loginVo.setRole("employee");
+            // 有多个团队，查询当前团队
+            tUserTeamLambdaQueryWrapper.eq(TUserTeam::getState,1);
+            tUserTeam = tUserTeamMapper.selectOne(tUserTeamLambdaQueryWrapper);
+            teamState=1;
         }
+        if(teamState==1){
+            loginVo.setTeamId(tUserTeam.getTid());
+            LambdaQueryWrapper<TTeams> tTeamsLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            tTeamsLambdaQueryWrapper.eq(TTeams::getId,tUserTeam.getTid());
+            TTeams tTeams = tTeamsMapper.selectOne(tTeamsLambdaQueryWrapper);
+            if(tTeams.getUserid().equals(user.getId())){
+                loginVo.setRole("admin");
+            }else{
+                loginVo.setRole("employee");
+            }
+        }
+
+        // 权限列表
         List<String> permissions = new ArrayList<>();
         permissions.add(loginVo.getRole());
 
         // 数据库获取的权限是字符串springSecurity需要实现GrantedAuthority接口类型，所有这里做一个类型转换
-        // List<SimpleGrantedAuthority> userPermissions = permissions.stream()
-        //         .map(permission -> new SimpleGrantedAuthority("role_" + permission)).toList();
         List<SimpleGrantedAuthority> userPermissions = permissions.stream()
                 .map(permission -> new SimpleGrantedAuthority("role_" + permission))
                 .collect(Collectors.toList());
-
+        sysUserDetails.setPermissions(userPermissions);
         // 将用户信息转为字符串
         String userInfo = objectMapper.writeValueAsString(loginVo);
-        // userPermissions.stream().map(String::valueOf).toList()
         String token = jwtUtil.createJwt(userInfo, userPermissions.stream().map(String::valueOf).collect(Collectors.toList()));
         // 把token放到redis中
         stringRedisTemplate.opsForValue().set("token" + request.getSession().getId(), token, 24, TimeUnit.HOURS);
@@ -162,7 +185,10 @@ public class AuthServiceImpl implements IAuthService {
 
         // 清除redis通过校验表示
         stringRedisTemplate.delete("isVerifyCode" + request.getSession().getId());
-        return Result.success("登录成功", token);
+        AuthLoginVo authLoginVo = new AuthLoginVo();
+        authLoginVo.setToken(token);
+        authLoginVo.setTeamState(teamState);
+        return Result.success("登录成功", authLoginVo);
     }
 
 

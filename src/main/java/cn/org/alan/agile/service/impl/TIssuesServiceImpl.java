@@ -36,11 +36,16 @@ public class TIssuesServiceImpl extends ServiceImpl<TIssuesMapper, TIssues> impl
     @Override
     public Result saveIssue(IssueSaveForm issueSaveForm) {
         TIssues tIssues = new TIssues();
-        tIssues.setContent(issueSaveForm.getContent());
         tIssues.setName(issueSaveForm.getName());
-        tIssues.setPriority(issueSaveForm.getPriority());
         tIssues.setType(issueSaveForm.getType());
-        tIssues.setItemid(SecurityUtil.getTeamId());
+        tIssues.setItemid(issueSaveForm.getItemId());
+        tIssues.setContent(issueSaveForm.getContent());
+        tIssues.setPriority(issueSaveForm.getPriority());
+        tIssues.setPrincipalid(issueSaveForm.getPrincipalId());
+        tIssues.setState(issueSaveForm.getState());
+        tIssues.setUserid(SecurityUtil.getUserId());
+        tIssues.setEnddate(issueSaveForm.getEndDate());
+        tIssues.setStartdate(issueSaveForm.getStartDate());
         int insert = tIssuesMapper.insert(tIssues);
         if(insert>0){
             return Result.success("保存成功");

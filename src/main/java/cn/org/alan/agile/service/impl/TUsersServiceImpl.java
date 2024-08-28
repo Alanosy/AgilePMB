@@ -33,7 +33,7 @@ public class TUsersServiceImpl extends ServiceImpl<TUsersMapper, TUsers>
     private TUsersConverter tUsersConverter;
     @Override
     public List<fetchUsersVo> fetchUsers() {
-        List<fetchUsersVo> usersList = tUsersMapper.fetchUsers();
+        List<fetchUsersVo> usersList = tUsersMapper.fetchUsers(SecurityUtil.getTeamId());
         return usersList;
     }
 

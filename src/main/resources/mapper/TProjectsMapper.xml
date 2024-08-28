@@ -17,7 +17,7 @@
         createtime,userid
     </sql>
     <select id="selectProject" resultType="cn.org.alan.agile.model.vo.project.ProjectPageVo">
-        select p.id,p.`name`,p.state,
+        select p.id,p.`name`,p.state,p.startdate,p.enddate,
         (SELECT count(*) from T_Requirements r WHERE r.itemid=p.id)as reqcount,
         (SELECT count(*) from T_Issues i WHERE i.itemid=p.id)as issuecount,
         (SELECT count(*) from T_Tasks t WHERE t.itemid=p.id)as taskcount,
@@ -40,8 +40,9 @@
     </select>
     <select id="fetchProjects" resultType="cn.org.alan.agile.model.vo.project.fetchProjectsVo">
 
-        select id ,name
-        from T_Projects
+        select p.id ,p.name
+        from T_Projects p
+        where p.teamid = #{teamId}
     </select>
     <select id="getOverviewItem" resultType="cn.org.alan.agile.model.vo.project.OverviewItemGetVo">
 

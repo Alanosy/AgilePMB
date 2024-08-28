@@ -40,7 +40,12 @@ public class TRequirementsServiceImpl extends ServiceImpl<TRequirementsMapper, T
         tRequirements.setContent(reqSaveForm.getContent());
         tRequirements.setName(reqSaveForm.getName());
         tRequirements.setPriority(reqSaveForm.getPriority());
-        tRequirements.setUserid(reqSaveForm.getUserid());
+        tRequirements.setStarttime(reqSaveForm.getStartDate());
+        tRequirements.setEndtime(reqSaveForm.getEndDate());
+        tRequirements.setItemid(reqSaveForm.getItemId());
+        tRequirements.setPrincipalid(reqSaveForm.getPrincipalId());
+        tRequirements.setState(reqSaveForm.getState());
+        tRequirements.setUserid(SecurityUtil.getUserId());
         int insert = tRequirementsMapper.insert(tRequirements);
         if(insert>0){
             return Result.success("保存成功");
@@ -53,15 +58,7 @@ public class TRequirementsServiceImpl extends ServiceImpl<TRequirementsMapper, T
 
         // 创建Page对象
         Page<TRequirements> page = new Page<>(pageNum, pageSize);
-        // 开始查询
-        // LambdaQueryWrapper<TRequirements> ReqQuery = new LambdaQueryWrapper<>();
-        // ReqQuery.like(StringUtils.isNotBlank(name), TRequirements::getName, name);
-        // if (itemId != null && !itemId.equals("")) {
-        //     ReqQuery.eq(TRequirements::getItemid, itemId);
-        // }
         Page<ReqGetVo> ReqPage = tRequirementsMapper.getReq(page,itemId,type, SecurityUtil.getUserId(),SecurityUtil.getTeamId());
-        // 实体转换
-        // Page<ReqGetVo> ReqVo = tRequirementsConverter.pageTopPV(ReqPage);
         return Result.success("查询成功", ReqPage);
     }
 

@@ -25,7 +25,7 @@
         LEFT JOIN T_Users u2 ON u2.id = i.userid
         LEFT JOIN T_Projects p ON p.id = i.itemid
         <trim prefixOverrides="and" prefix="where">
-            i.teamid = #{teamId}
+            i.itemid in (select tp.pid  FROM T_Team_Project tp WHERE tp.tid= #{teamId})
             <if test='type==1 and type!=null and type!=""'>
                 and i.principalid = #{userId}
             </if>

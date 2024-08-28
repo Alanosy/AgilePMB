@@ -56,7 +56,7 @@ public class TaskController {
      * @return
      */
     @DeleteMapping("/{taskId}")
-    public Result<String> delTask(@PathVariable("taskId") Long taskId) {
+    public Result delTask(@PathVariable("taskId") Long taskId) {
         return tTaskIssueService.delTask(taskId);
     }
 
@@ -76,6 +76,12 @@ public class TaskController {
         return result;
     }
 
+    // Legacy task
+    @GetMapping("/legacy-task")
+    public Result<String> getLegacyTask(){
+        Result  result = tTaskIssueService.getLegacyTask();
+        return result;
+    }
 
 
 }

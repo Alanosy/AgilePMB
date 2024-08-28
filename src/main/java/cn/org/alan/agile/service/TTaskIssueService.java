@@ -21,4 +21,6 @@ public interface TTaskIssueService extends IService<TTaskIssue> {
     Result getWeekTask();
 
     Result getTaskBoard();
+
+    Result getLegacyTask();
 }

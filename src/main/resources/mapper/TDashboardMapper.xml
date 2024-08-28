@@ -6,10 +6,10 @@
 
     <select id="getCount" resultType="cn.org.alan.agile.model.vo.dashboard.DashBoardCountVo">
         SELECT
-        (SELECT COUNT(*) FROM T_User_Team ut WHERE ut.tid = #{teamId}) AS "projectCount",
-        (SELECT COUNT(*) FROM T_Tasks WHERE principalid = #{userId}) AS "taskCount",
-        (SELECT COUNT(*) FROM T_Requirements r WHERE r.principalid = #{userId}) AS "requirementCount",
-        (SELECT COUNT(*) FROM T_Issues i WHERE i.principalid = #{userId}) AS "issueCount"
+        (SELECT COUNT(*) FROM T_Team_Project tp WHERE tp.tid = #{teamId}) AS "projectCount",
+        (SELECT COUNT(*) FROM T_Tasks t WHERE t.principalid = #{userId} and t.state !=2 ) AS "taskCount",
+        (SELECT COUNT(*) FROM T_Requirements r WHERE r.principalid = #{userId} and r.state !=6 ) AS "requirementCount",
+        (SELECT COUNT(*) FROM T_Issues i WHERE i.principalid = #{userId} and i.state not in (3,6) ) AS "issueCount"
 
     </select>
 </mapper>

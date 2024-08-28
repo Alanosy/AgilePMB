@@ -71,15 +71,21 @@ public class VerifyTokenFilter extends OncePerRequestFilter {
         }
         String id = request.getSession().getId();
         System.out.println(id);
+
         // 验证token在redis中是否存在，key使用sessionId
         // if (Boolean.FALSE.equals(stringRedisTemplate.hasKey("token" + request.getSession().getId()))) {
         //     responseUtil.response(response, Result.failed("token无效，请重新登录"));
         //     return;
         // }
+
         // 自动续期
         // stringRedisTemplate.expire("token" + request.getSession().getId(), 2, TimeUnit.HOURS);
         // 从jwt 获取用户信息和权限
+
+        // 反序列化token
         String userInfo = jwtUtil.getUser(authorization);
+
+        // 反序列化权限列表
         List<String> authList = jwtUtil.getAuthList(authorization);
         // 反序列化jwtToken获取用户信息
         LoginVo sysUser = objectMapper.readValue(userInfo, LoginVo.class);

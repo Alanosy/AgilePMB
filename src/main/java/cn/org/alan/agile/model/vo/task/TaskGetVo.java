@@ -23,6 +23,7 @@ public class TaskGetVo {
      * 任务名称
      */
     private String taskName;
+    private String createName;
 
     /**
      * 状态
@@ -57,6 +58,7 @@ public class TaskGetVo {
      * 文档内容
      */
     private String content;
+    private Long principalid;
 
 
 }
