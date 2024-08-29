@@ -34,5 +34,8 @@ public class TeamGetVo {
      * 创建时间
      */
     private Date createtime;
+    /**
+     * 状态
+     */
     private String state;
 }

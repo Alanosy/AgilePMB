@@ -34,7 +34,7 @@ public class TaskController {
     }
 
     /**
-     * 分页查询
+     * 分页查询任务列表
      * @param pageNum
      * @param pageSize
      * @param itemId
@@ -70,17 +70,34 @@ public class TaskController {
         return result;
     }
 
+    /**
+     * 获取任务面板
+     * @return
+     */
     @GetMapping("/taskBoard")
     public Result getTaskBoard(){
         Result  result = tTaskIssueService.getTaskBoard();
         return result;
     }
 
-    // Legacy task
+    /**
+     * 获取遗留任务
+     * @return
+     */
     @GetMapping("/legacy-task")
     public Result<String> getLegacyTask(){
         Result  result = tTaskIssueService.getLegacyTask();
         return result;
+    }
+
+    /**
+     * 获取燃尽图数据
+     * @param itemId
+     * @return
+     */
+    @GetMapping("/burndown-chart")
+    public  Result getBurndownChart(@RequestParam(value = "itemId", required = false) Long itemId) {
+        return tTaskIssueService.getBurndownChart(itemId);
     }
 
 

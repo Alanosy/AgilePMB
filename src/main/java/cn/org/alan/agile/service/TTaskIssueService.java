@@ -23,4 +23,6 @@ public interface TTaskIssueService extends IService<TTaskIssue> {
     Result getTaskBoard();
 
     Result getLegacyTask();
+
+    Result getBurndownChart(Long itemId);
 }

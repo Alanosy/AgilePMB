@@ -124,4 +124,14 @@
         );
 
     </select>
+    <select id="getTaskCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM T_Tasks t
+        WHERE t.itemid = #{itemId}
+    </select>
+    <select id="getBurndownChart" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM T_Tasks t
+        WHERE DATE(t.finishtime) = DATE(#{date}) and state = 2 and t.id = #{itemId}
+    </select>
 </mapper>

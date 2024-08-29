@@ -23,6 +23,9 @@ public class TaskGetVo {
      * 任务名称
      */
     private String taskName;
+    /**
+     * 创建人名称
+     */
     private String createName;
 
     /**
@@ -58,6 +61,9 @@ public class TaskGetVo {
      * 文档内容
      */
     private String content;
+    /**
+     * 负责人id
+     */
     private Long principalid;
 
 

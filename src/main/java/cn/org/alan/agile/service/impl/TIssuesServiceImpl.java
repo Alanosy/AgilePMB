@@ -6,6 +6,7 @@ import cn.org.alan.agile.model.entity.TRequirements;
 import cn.org.alan.agile.model.entity.TTasks;
 import cn.org.alan.agile.model.form.issue.IssueSaveForm;
 import cn.org.alan.agile.model.form.issue.IssueUpdateState;
+import cn.org.alan.agile.model.form.issue.UpdateIssueForm;
 import cn.org.alan.agile.model.vo.issue.IssuesGetVo;
 import cn.org.alan.agile.util.SecurityUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -84,6 +85,11 @@ public class TIssuesServiceImpl extends ServiceImpl<TIssuesMapper, TIssues> impl
             return Result.success("删除成功");
         }
         return Result.failed("删除失败");
+    }
+
+    @Override
+    public Result updateIssue(UpdateIssueForm updateIssueForm) {
+        return null;
     }
 }
 

@@ -12,8 +12,20 @@ import java.time.LocalDateTime;
 @Data
 public class ApplyTeamGetVo {
     private Long id;
+    /**
+     * 真实姓名
+     */
     private String realName;
+    /**
+     * 账号
+     */
     private String username;
+    /**
+     * 创建时间
+     */
     private LocalDateTime createtime;
+    /**
+     * 申请加入的团队id
+     */
     private Long teamId;
 }

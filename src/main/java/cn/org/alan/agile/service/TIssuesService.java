@@ -4,6 +4,7 @@ import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.entity.TIssues;
 import cn.org.alan.agile.model.form.issue.IssueSaveForm;
 import cn.org.alan.agile.model.form.issue.IssueUpdateState;
+import cn.org.alan.agile.model.form.issue.UpdateIssueForm;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -20,4 +21,6 @@ public interface TIssuesService extends IService<TIssues> {
     Result updateIssueState(IssueUpdateState issueUpdateState);
 
     Result<String> delIssue(Long issueId);
+
+    Result updateIssue(UpdateIssueForm updateIssueForm);
 }

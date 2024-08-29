@@ -12,9 +12,15 @@ import java.util.Date;
 @Data
 public class FileListGetVo {
     private Long id;
+    /**
+     * 文件url
+     */
     private String url;
     private Long userid;
     private Long itemid;
+    /**
+     * 文件名
+     */
     private String filename;
     private Date createtime;
 }

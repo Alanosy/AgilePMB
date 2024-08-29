@@ -93,6 +93,9 @@ public class WeekTaskGetVo {
      * 状态
      */
     private String isLeaveOver;
+    /**
+     * 创建人名称
+     */
     private String createName;
 
 }

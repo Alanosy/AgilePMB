@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +29,10 @@ public interface TTasksMapper extends BaseMapper<TTasks> {
     List<LegacyTaskGetVo> getLegacyTask(Long userId, Long teamId);
 
     List<WeekTaskGetVo> getWeekTask(LocalDate date, Long userId, Long teamId);
+
+    Integer getTaskCount(Long itemId);
+
+    Integer getBurndownChart(Long itemId, Date date);
 
     // List<String> getWeekTask();
 }

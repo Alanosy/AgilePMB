@@ -92,5 +92,8 @@ public class LegacyTaskGetVo {
      * 状态
      */
     private String isLeaveOver;
+    /**
+     * 创建人名称
+     */
     private String createName;
 }

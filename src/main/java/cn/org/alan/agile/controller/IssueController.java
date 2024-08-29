@@ -3,6 +3,7 @@ package cn.org.alan.agile.controller;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.form.issue.IssueSaveForm;
 import cn.org.alan.agile.model.form.issue.IssueUpdateState;
+import cn.org.alan.agile.model.form.issue.UpdateIssueForm;
 import cn.org.alan.agile.model.form.requirement.ReqSaveForm;
 import cn.org.alan.agile.model.form.requirement.ReqUpdateState;
 import cn.org.alan.agile.service.TIssuesService;
@@ -36,7 +37,7 @@ public class IssueController {
     }
 
     /**
-     * 分页查询
+     * 分页查询问题列表
      * @param pageNum
      * @param pageSize
      * @param itemId
@@ -55,7 +56,7 @@ public class IssueController {
     }
 
     /**
-     * 修改状态
+     * 修改表格中问题的状态
      * @param issueUpdateState
      * @return
      */
@@ -73,5 +74,11 @@ public class IssueController {
     @DeleteMapping("/{issueId}")
     public Result<String> delIssue(@PathVariable("issueId") Long issueId) {
         return tIssuesService.delIssue(issueId);
+    }
+
+    @PutMapping
+    public Result updateIssue(@RequestBody UpdateIssueForm updateIssueForm){
+        Result  result = tIssuesService.updateIssue(updateIssueForm);
+        return result;
     }
 }

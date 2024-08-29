@@ -32,7 +32,7 @@ public class ProjectController {
     private TProjectsService tProjectsService;
 
     /**
-     * 分页查询
+     * 分页查询项目列表
      * @param pageNum
      * @param pageSize
      * @param itemName
@@ -68,31 +68,61 @@ public class ProjectController {
         return Result.success("请求成功",projectsList);
     }
 
+    /**
+     * 项目概述
+     * @param itemId
+     * @return
+     */
     @GetMapping("/overview")
     public Result getOverviewItem(@RequestParam(value = "itemId",required = false) Long itemId){
         Result result = tProjectsService.getOverviewItem(itemId);
         return result;
     }
+
+    /**
+     * 项目文档
+     * @param itemId
+     * @return
+     */
     @GetMapping("/itemContent")
     public Result getItemContent(@RequestParam(value = "itemId",required = false) Long itemId){
         Result result = tProjectsService.getItemContent(itemId);
         return result;
     }
+
+    /**
+     * 修改项目文档
+     * @param itemContentUpdateForm
+     * @return
+     */
     @PutMapping("/itemContent")
     public Result updateItemContent(@RequestBody ItemContentUpdateForm itemContentUpdateForm){
         Result result = tProjectsService.updateItemContent(itemContentUpdateForm);
         return result;
     }
+
+    /**
+     * 添加项目备注
+     * @param remarkSaveForm
+     * @return
+     */
     @PostMapping("/remark")
     public Result saveRemark(@RequestBody RemarkSaveForm remarkSaveForm){
         Result result = tProjectsService.saveRemark(remarkSaveForm);
         return result;
     }
+
+    /**
+     * 获取项目备注
+     * @param itemId
+     * @return
+     */
     @GetMapping("/remark")
     public Result getRemark(@RequestParam(value = "itemId",required = false) Long itemId){
         Result result = tProjectsService.getRemark(itemId);
         return result;
     }
+
     /**
      * 上传附件
      * @param file 文件
@@ -103,11 +133,23 @@ public class ProjectController {
                                      @RequestParam(value = "itemId",required = false) Long itemId) throws IOException {
         return tProjectsService.uploadFile(file,itemId);
     }
+
+    /**
+     * 获取文件列表
+     * @param itemId
+     * @return
+     */
     @GetMapping("/file-list")
     public Result getFileList(@RequestParam(value = "itemId",required = false) Long itemId){
         Result result = tProjectsService.getFileList(itemId);
         return result;
     }
+
+    /**
+     * 修改项目信息
+     * @param projectUpdateForm
+     * @return
+     */
     @PutMapping
     public Result updateProject(@RequestBody ProjectUpdateForm projectUpdateForm){
         Result result = tProjectsService.updateProject(projectUpdateForm);

@@ -27,6 +27,7 @@ public class AuthController {
     @Resource
     private IAuthService iAuthService;
 
+
     /**
      * 用户登录
      * @param request
@@ -42,8 +43,8 @@ public class AuthController {
 
     /**
      * 用户注销
-     * @param request request对象，需要清除session里面的内容
-     * @return 响应结果
+     * @param request
+     * @return
      */
     @DeleteMapping("/logout")
     public Result<String> logout(HttpServletRequest request) {
@@ -51,10 +52,10 @@ public class AuthController {
     }
 
     /**
-     * 用户注册，只能注册学生
-     * @param request  request对象，用于获取sessionId
-     * @param userForm 用户信息
-     * @return 响应结果
+     * 用户注册
+     * @param request
+     * @param userForm
+     * @return
      */
     @PostMapping("/register")
     public Result register(HttpServletRequest request,
@@ -64,8 +65,8 @@ public class AuthController {
 
     /**
      * 获取图片验证码
-     * @param request  request对象，获取sessionId
-     * @param response response对象，响应图片
+     * @param request
+     * @param response
      */
     @GetMapping("/captcha")
     public void getCaptcha(HttpServletRequest request, HttpServletResponse response) {
@@ -74,9 +75,9 @@ public class AuthController {
 
     /**
      * 校验验证码
-     * @param request request对象，获取sessionId
-     * @param code    用户输入的验证码
-     * @return 响应结果
+     * @param request
+     * @param code
+     * @return
      */
     @PostMapping("/verifyCode/{code}")
     public Result<String> verifyCode(HttpServletRequest request, @PathVariable("code") String code) {

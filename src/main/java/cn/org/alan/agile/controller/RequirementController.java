@@ -32,7 +32,7 @@ public class RequirementController {
     }
 
     /**
-     * 添加需求
+     * 分页查询需求列表
      * @param pageNum
      * @param pageSize
      * @param type

@@ -9,6 +9,12 @@ import lombok.Data;
  */
 @Data
 public class RemarkGetVo {
+    /**
+     * 备注文档
+     */
     private String content;
+    /**
+     * 创建备注人
+     */
     private String userName;
 }

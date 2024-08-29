@@ -9,6 +9,12 @@ import lombok.Data;
  */
 @Data
 public class AuthLoginVo {
+    /**
+     * token
+     */
     private String token;
+    /**
+     * 团队状态
+     */
     private Integer teamState;
 }

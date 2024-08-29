@@ -45,7 +45,7 @@ public class TeamController {
     }
 
     /**
-     * 分页查询
+     * 分页查询团队列表
      * @param pageNum
      * @param pageSize
      * @param teamName
@@ -61,7 +61,7 @@ public class TeamController {
     }
 
     /**
-     * 分页查询
+     * 分页查询团队用户成员列表
      * @param pageNum
      * @param pageSize
      * @return
