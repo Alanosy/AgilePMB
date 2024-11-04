@@ -4,19 +4,19 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
- * 
  * @TableName T_Issues
  */
-@TableName(value ="T_Issues")
+@TableName(value = "T_Issues")
 @Data
 public class TIssues implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

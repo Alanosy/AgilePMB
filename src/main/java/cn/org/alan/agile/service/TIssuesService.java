@@ -22,5 +22,5 @@ public interface TIssuesService extends IService<TIssues> {
 
     Result<String> delIssue(Long issueId);
 
-    Result updateIssue(UpdateIssueForm updateIssueForm);
+    Result updateIssue(Long issueId, UpdateIssueForm updateIssueForm);
 }

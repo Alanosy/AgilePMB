@@ -21,8 +21,6 @@ import javax.annotation.Resource;
 @MapperScan("cn.org.alan.exam.mapper")
 public class MybatisPlusConfig {
 
-
-
     /**
      * 添加分页插件
      */
@@ -33,7 +31,5 @@ public class MybatisPlusConfig {
         // 如果有多数据源可以不配具体类型, 否则都建议配上具体的 DbType
         return interceptor;
     }
-
-
 
 }

@@ -2,6 +2,8 @@ package cn.org.alan.agile.model.form.team;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @Author Alan
  * @Version
@@ -12,6 +14,7 @@ public class TeamAddForm {
     /**
      * 团队代码
      */
+    @NotBlank(message = "团队代码不能为空")
     private String tcode;
 
     /**

@@ -74,13 +74,13 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
     public Result saveTeam(TeamSaveForm teamSaveForm) {
         TTeams tTeams = new TTeams();
         tTeams.setName(teamSaveForm.getTeamName());
-        tTeams.setUserid(teamSaveForm.getUserId());
+        tTeams.setUserid(teamSaveForm.getUid());
         tTeams.setCode(teamCodeGenerator.createTeamCode(18));
         int insert1 = tTeamsMapper.insert(tTeams);
         TUserTeam tUserTeam = new TUserTeam();
         tUserTeam.setState("1");
         tUserTeam.setTid(tTeams.getId());
-        tUserTeam.setUid(teamSaveForm.getUserId());
+        tUserTeam.setUid(teamSaveForm.getUid());
         int insert2 = tUserTeamMapper.insert(tUserTeam);
         if(insert1>0 && insert2 >0){
             return Result.success("保存成功");
@@ -107,17 +107,16 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
     @Override
     public Result getTeamPage(Integer pageNum, Integer pageSize, String teamName, String type) {
         Page<TTeams> page = new Page<>(pageNum, pageSize);
-
+        SecurityUtil.getUserId();
         Page<TeamGetVo> result = tUserTeamMapper.getTeamPage(page, teamName,SecurityUtil.getUserId(),type);
 
         return Result.success("查询成功", result);
     }
-
     @Override
     public Result getTeamUserPage(Integer pageNum, Integer pageSize, String realName) {
         Page<TTeams> page = new Page<>(pageNum, pageSize);
 
-        Page<TeamUserGetVo> result = tUserTeamMapper.getTeamUserPage(page,SecurityUtil.getTeamId(),realName);
+        Page<TeamUserGetVo> result = tUserTeamMapper.getTeamUserPage(page,SecurityUtil.getTeamId(),realName,SecurityUtil.getUserId());
 
         return Result.success("查询成功", result);
     }
@@ -125,7 +124,6 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
     @Override
     @SneakyThrows(JsonProcessingException.class)
     public Result cutTeam(HttpServletRequest request, CutTeamForm cutTeamForm) {
-        // Integer result = tUserTeamMapper.cutTeam(cutTeamForm,SecurityUtil.getTeamId(),SecurityUtil.getUserId());
         LambdaUpdateWrapper<TUserTeam> tUserTeamLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         tUserTeamLambdaUpdateWrapper.eq(TUserTeam::getUid,SecurityUtil.getUserId())
                 .eq(TUserTeam::getState,1)
@@ -139,7 +137,6 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
                 .set(TUserTeam::getState,1);
         int update2 = tUserTeamMapper.update(lambdaWrapper);
 
-
         // 根据用户名获取用户信息
         LambdaQueryWrapper<TUsers> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TUsers::getId, SecurityUtil.getUserId());
@@ -149,7 +146,6 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
         // 创建一个sysUserDetails对象，该类实现了UserDetails接口
         SysUserDetails sysUserDetails = new SysUserDetails(user);
         // // 把转型后的权限放进sysUserDetails对象
-        // sysUserDetails.setPermissions(userPermissions);
         LoginVo loginVo = authConverter.entityToEV(user);
         loginVo.setTeamId(cutTeamForm.getTeamId());
         // 查询团队
@@ -178,10 +174,8 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
         // 创建UsernamePasswordAuthenticationToken  参数：用户信息，密码，权限列表userPermissions
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(sysUserDetails, user.getPassword(), userPermissions );
-
         // 可选，添加Web认证细节
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
         // 用户信息存放进上下文
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         //用户信息放入
@@ -201,7 +195,7 @@ public class TTeamsServiceImpl extends ServiceImpl<TTeamsMapper, TTeams>
         if("0".equals(applyCheckForm.getState())){
             state = 3;
         } else if ("1".equals(applyCheckForm.getState())) {
-            state = 0;
+            state = 1;
         }
 
 

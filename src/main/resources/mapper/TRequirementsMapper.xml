@@ -18,8 +18,12 @@
         userid,priority,plantime,
         createtime
     </sql>
+    <update id="updateReq">
+        update T_Requirements r
+        set r.state = #{state}
+        where r.id = #{id}
+    </update>
     <select id="getReq" resultType="cn.org.alan.agile.model.vo.requirement.ReqGetVo">
-
         SELECT r.id,r.priority,r.`name` as reqname,p.`name` as itemname,r.state,r.starttime,r.endtime,u.realname,r.content,
         r.principalid,u2.realname as createName,r.createtime
         FROM T_Requirements r
@@ -27,7 +31,7 @@
         LEFT JOIN T_Users u ON u.id = r.principalid
         LEFT JOIN T_Users u2 ON u2.id = r.userid
         <trim prefixOverrides="and" prefix="where">
-            r.itemid in (select tp.pid  FROM T_Team_Project tp WHERE tp.tid= #{teamId})
+            r.delete_flag = 0 and r.teamId =#{teamId}
             <if test='type==1 and type!=null and type!=""'>
                 and r.principalid = #{userId}
             </if>
@@ -35,7 +39,8 @@
                 and r.userid = #{userId}
             </if>
             <if test='type==3 and type!=null and type!=""'>
-                and r.endtime IS NULL OR r.endtime &lt; now()
+                and r.finishtime IS NULL OR r.endtime &lt; now()
+                and r.principalid = #{userId}
             </if>
             <if test='itemId!=null and itemId!=""'>
                 and r.itemId = #{itemId}

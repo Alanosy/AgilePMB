@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper(componentModel = "spring")
 public interface AuthConverter {
+
     LoginVo entityToEV(TUsers u);
+
     TUsers VoToEntity(LoginVo l);
 }

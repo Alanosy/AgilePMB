@@ -16,6 +16,35 @@
         id,name,content,
         createtime,userid
     </sql>
+    <delete id="closeItem">
+        <![CDATA[
+        delete from T_Projects p where p.id = #{itemId};
+        delete from T_Issues i where i.itemid = #{itemId};
+        delete from T_Remarks re where re.itemid = #{itemId};
+        delete from T_Requirements r where r.itemid = #{itemId};
+        delete from T_Task t where t.itemid = #{itemId};
+        ]]>
+
+    </delete>
+    <delete id="deleteProjectById">
+        delete from T_Projects p where p.id = #{itemId}
+    </delete>
+
+    <delete id="deleteIssuesByItemId">
+        delete from T_Issues i where i.itemid = #{itemId}
+    </delete>
+
+    <delete id="deleteRemarksByItemId">
+        delete from T_Remarks r where r.itemid = #{itemId}
+    </delete>
+
+    <delete id="deleteRequirementsByItemId">
+        delete from T_Requirements re where re.itemid = #{itemId}
+    </delete>
+
+    <delete id="deleteTaskByItemId">
+        delete from T_Tasks t where t.itemid = #{itemId}
+    </delete>
     <select id="selectProject" resultType="cn.org.alan.agile.model.vo.project.ProjectPageVo">
         select p.id,p.`name`,p.state,p.startdate,p.enddate,
         (SELECT count(*) from T_Requirements r WHERE r.itemid=p.id)as reqcount,
@@ -29,7 +58,7 @@
                 and p.name LIKE CONCAT('%', #{itemName}, '%')
             </if>
             <if test='type==1 and type!=null and type!=""'>
-                and p.userid != #{userId}
+                and p.userid == #{userId}
             </if>
             <if test='type==2 and type!=null and type!=""'>
                 and p.userid = #{userId}

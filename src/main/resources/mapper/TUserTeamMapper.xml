@@ -5,9 +5,9 @@
 <mapper namespace="cn.org.alan.agile.mapper.TUserTeamMapper">
 
     <resultMap id="BaseResultMap" type="cn.org.alan.agile.model.entity.TUserTeam">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="tid" column="tid" jdbcType="BIGINT"/>
-            <result property="uid" column="uid" jdbcType="BIGINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="tid" column="tid" jdbcType="BIGINT"/>
+        <result property="uid" column="uid" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -35,10 +35,10 @@
         SELECT te.`name`,te.id,te.`code`,ut.state,te.createtime
         FROM T_User_Team ut
         LEFT JOIN T_Teams te ON te.id = ut.tid
-        <trim prefix="where"  prefixOverrides="and">
+        <trim prefix="where" prefixOverrides="and">
             ut.uid = #{userId}
             <if test='teamName!=null and teamName!=""'>
-               and te.name like concat('%',#{teamName},'%')
+                and te.name like concat('%',#{teamName},'%')
             </if>
             <if test='type=="1" and type!=null and type!=""'>
                 and te.userid = #{userId}
@@ -46,17 +46,24 @@
         </trim>
     </select>
     <select id="getTeamUserPage" resultType="cn.org.alan.agile.model.vo.team.TeamUserGetVo">
-        SELECT ut.id,u.realname,ut.createtime,ut.state as role
+        SELECT ut.id, u.realname, ut.createtime,
+        CASE
+        WHEN te.userid = u.id AND te.id = ut.tid THEN 1
+        ELSE 0
+        END AS role
         FROM T_User_Team ut
         LEFT JOIN T_Users u ON u.id = ut.uid
-        <trim prefix="where"  prefixOverrides="and">
-            ut.state in (0,1)
+        LEFT JOIN T_Teams te ON te.id = ut.tid
+        <trim prefix="where" prefixOverrides="and">
+            ut.state IN (0, 1)  AND ut.tid = (SELECT tt.tid FROM T_User_Team tt WHERE tt.state = 1 AND tt.uid = #{userId})
             <if test='realName!=null and realName!=""'>
                 and u.realname like concat('%',#{realName},'%')
             </if>
+
         </trim>
     </select>
     <select id="getApplyTeamPage" resultType="cn.org.alan.agile.model.vo.team.ApplyTeamGetVo">
+
 
         SELECT u.id,u.realname as realName, u.username,ut.createtime,ut.tid as teamId
         FROM T_User_Team ut

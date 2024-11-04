@@ -18,15 +18,17 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/dshboard")
 public class DashboardController {
+
     @Resource
     private TDashboardService tDashboardService;
 
     /**
      * 获取项目数、待办需求数、待办任务数、待办问题数
+     *
      * @return
      */
     @GetMapping("count")
-    public Result getCount(){
+    public Result getCount() {
         return tDashboardService.getCount();
     }
 }

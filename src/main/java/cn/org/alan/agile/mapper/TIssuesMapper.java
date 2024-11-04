@@ -1,6 +1,7 @@
 package cn.org.alan.agile.mapper;
 
 import cn.org.alan.agile.model.entity.TIssues;
+import cn.org.alan.agile.model.form.issue.UpdateIssueForm;
 import cn.org.alan.agile.model.vo.issue.IssuesGetVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +15,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 public interface TIssuesMapper extends BaseMapper<TIssues> {
 
     Page<IssuesGetVo> getIssue(Page<TIssues> page, Integer itemId, String issueType, String type, Long userId, Long teamId);
+
+    int updateIssue(UpdateIssueForm updateIssueForm);
 }
 
 

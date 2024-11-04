@@ -1,6 +1,7 @@
 package cn.org.alan.agile.mapper;
 
 import cn.org.alan.agile.model.entity.TRequirements;
+import cn.org.alan.agile.model.form.requirement.ReqUpdateForm;
 import cn.org.alan.agile.model.vo.requirement.ReqGetVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +15,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 public interface TRequirementsMapper extends BaseMapper<TRequirements> {
 
     Page<ReqGetVo> getReq(Page<TRequirements> page, Integer itemId, Integer type, Long userId, Long teamId);
+
+    int updateReq(ReqUpdateForm reqUpdateForm);
 }
 
 

@@ -27,22 +27,21 @@ public class AuthController {
     @Resource
     private IAuthService iAuthService;
 
-
     /**
      * 用户登录
+     *
      * @param request
      * @param loginForm
      * @return
      */
     @PostMapping("/login")
-    public Result<AuthLoginVo> login(HttpServletRequest request,
-                                     @Validated @RequestBody LoginForm loginForm) {
-
-        return iAuthService.login(request,loginForm);
+    public Result<AuthLoginVo> login(HttpServletRequest request, @Validated @RequestBody LoginForm loginForm) {
+        return iAuthService.login(request, loginForm);
     }
 
     /**
      * 用户注销
+     *
      * @param request
      * @return
      */
@@ -53,18 +52,20 @@ public class AuthController {
 
     /**
      * 用户注册
+     *
      * @param request
      * @param userForm
      * @return
      */
     @PostMapping("/register")
     public Result register(HttpServletRequest request,
-                                   @RequestBody UserForm userForm) {
+                           @RequestBody UserForm userForm) {
         return iAuthService.register(request, userForm);
     }
 
     /**
      * 获取图片验证码
+     *
      * @param request
      * @param response
      */
@@ -75,6 +76,7 @@ public class AuthController {
 
     /**
      * 校验验证码
+     *
      * @param request
      * @param code
      * @return
@@ -83,6 +85,5 @@ public class AuthController {
     public Result<String> verifyCode(HttpServletRequest request, @PathVariable("code") String code) {
         return iAuthService.verifyCode(request, code);
     }
-
 
 }

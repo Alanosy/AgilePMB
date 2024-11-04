@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Component;
+
 /**
  * @Author Alan
  * @Version

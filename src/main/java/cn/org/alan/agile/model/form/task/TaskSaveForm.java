@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -17,14 +18,13 @@ public class TaskSaveForm {
     /**
      * 任务名称
      */
+    @NotBlank(message = "任务名称不能为空")
     private String name;
 
     /**
      * 任务文档
      */
     private String content;
-
-
 
     /**
      * 类型

@@ -77,9 +77,8 @@ public class AuthServiceImpl implements IAuthService {
     private TUserTeamMapper tUserTeamMapper;
     @Resource
     private TTeamsMapper tTeamsMapper;
-    // @Resource
-    // private UserDailyLoginDurationMapper userDailyLoginDurationMapper;
 
+    private static final String IS_VERIFY_CODE_PREFIX = "isVerifyCode";
     /**
      * 登录
      * @param request
@@ -89,11 +88,13 @@ public class AuthServiceImpl implements IAuthService {
     @SneakyThrows(JsonProcessingException.class)
     @Override
     public Result<AuthLoginVo> login(HttpServletRequest request, LoginForm loginForm) {
-        // 先判断用户是否通过校验
-        String s = stringRedisTemplate.opsForValue().get("isVerifyCode" + request.getSession().getId());
-        if (StringUtils.isBlank(s)) {
+        // 检查验证码是否已验证
+        String isVerifyCodeKey = IS_VERIFY_CODE_PREFIX + request.getSession().getId();
+        String isVerifyCodeValue = stringRedisTemplate.opsForValue().get(isVerifyCodeKey);
+        if (StringUtils.isBlank(isVerifyCodeValue)) {
             return Result.failed("请先验证验证码");
         }
+
         // 根据用户名获取用户信息
         LambdaQueryWrapper<TUsers> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TUsers::getUsername, loginForm.getUsername());
@@ -107,70 +108,35 @@ public class AuthServiceImpl implements IAuthService {
             return Result.failed("密码错误");
         }
         user.setPassword(null);
-        // 根据用户Id获取权限
 
-        // 创建一个sysUserDetails对象，该类实现了UserDetails接口
-        SysUserDetails sysUserDetails = new SysUserDetails(user);
-        // // 把转型后的权限放进sysUserDetails对象
-
+        // 把转型后的权限放进sysUserDetails对象
         LoginVo loginVo = authConverter.entityToEV(user);
-        /**
-         * 查询是否加有有关联团队
-         */
-        LambdaQueryWrapper<TUserTeam> tUserTeamLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        tUserTeamLambdaQueryWrapper.eq(TUserTeam::getUid,user.getId());
-        List<TUserTeam> tUserTeams = tUserTeamMapper.selectList(tUserTeamLambdaQueryWrapper);
-        Integer teamState = null;
-        TUserTeam tUserTeam = new TUserTeam();
-        if(tUserTeams.size()==0){
-            // 只注册了账号，没有加入、创建团队
-            teamState=0;
-        }else if(tUserTeams.equals(1)){
-            tUserTeam = tUserTeams.get(0);
-            if(tUserTeam.getState().equals(1)){
-                // 只有一个团队，刚好是当前团队
-                teamState=1;
-
-            }else if(tUserTeam.getState().equals(2)){
-                // 只有一个团队，是申请加入团队，还没同意
-                teamState=2;
-            } else if(tUserTeam.getState().equals(3)){
-                // 只有一个团队，是申请加入团队，被拒绝
-                teamState=3;
-            }
-        }else{
-            // 有多个团队，查询当前团队
-            tUserTeamLambdaQueryWrapper.eq(TUserTeam::getState,1);
-            tUserTeam = tUserTeamMapper.selectOne(tUserTeamLambdaQueryWrapper);
-            teamState=1;
-        }
-        if(teamState==1){
+        // 查询是否加有有关联团队
+        Integer teamState = determineTeamState(user);
+        if (teamState == 1) {
+            TUserTeam tUserTeam = getCurrentTeam(user);
             loginVo.setTeamId(tUserTeam.getTid());
-            LambdaQueryWrapper<TTeams> tTeamsLambdaQueryWrapper = new LambdaQueryWrapper<>();
-            tTeamsLambdaQueryWrapper.eq(TTeams::getId,tUserTeam.getTid());
-            TTeams tTeams = tTeamsMapper.selectOne(tTeamsLambdaQueryWrapper);
-            if(tTeams.getUserid().equals(user.getId())){
+            if (isAdmin(tUserTeam,user)) {
                 loginVo.setRole("admin");
-            }else{
+            } else {
                 loginVo.setRole("employee");
             }
         }
-
+        // 创建一个sysUserDetails对象，该类实现了UserDetails接口
+        SysUserDetails sysUserDetails = new SysUserDetails(user);
         // 权限列表
         List<String> permissions = new ArrayList<>();
         permissions.add(loginVo.getRole());
-
         // 数据库获取的权限是字符串springSecurity需要实现GrantedAuthority接口类型，所有这里做一个类型转换
         List<SimpleGrantedAuthority> userPermissions = permissions.stream()
                 .map(permission -> new SimpleGrantedAuthority("role_" + permission))
                 .collect(Collectors.toList());
         sysUserDetails.setPermissions(userPermissions);
-        // 将用户信息转为字符串
+        // 将用户信息转为字符串并创建token
         String userInfo = objectMapper.writeValueAsString(loginVo);
         String token = jwtUtil.createJwt(userInfo, userPermissions.stream().map(String::valueOf).collect(Collectors.toList()));
         // 把token放到redis中
         stringRedisTemplate.opsForValue().set("token" + request.getSession().getId(), token, 24, TimeUnit.HOURS);
-
         // 封装用户的身份信息，为后续的身份验证和授权操作提供必要的输入
         // 创建UsernamePasswordAuthenticationToken  参数：用户信息，密码，权限列表userPermissions
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -181,14 +147,58 @@ public class AuthServiceImpl implements IAuthService {
 
         // 用户信息存放进上下文
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        //用户信息放入
-
         // 清除redis通过校验表示
         stringRedisTemplate.delete("isVerifyCode" + request.getSession().getId());
         AuthLoginVo authLoginVo = new AuthLoginVo();
         authLoginVo.setToken(token);
         authLoginVo.setTeamState(teamState);
         return Result.success("登录成功", authLoginVo);
+    }
+
+    // 判断用户是否为管理员
+    private boolean isAdmin(TUserTeam tUserTeam,TUsers user) {
+        LambdaQueryWrapper<TTeams> tTeamsQueryWrapper = new LambdaQueryWrapper<>();
+        tTeamsQueryWrapper.eq(TTeams::getId, tUserTeam.getTid());
+        TTeams tTeams = tTeamsMapper.selectOne(tTeamsQueryWrapper);
+        return tTeams.getUserid().equals(user.getId());
+    }
+
+    // 获取当前用户所在的团队信息
+    private TUserTeam getCurrentTeam(TUsers user) {
+        LambdaQueryWrapper<TUserTeam> tUserTeamQueryWrapper = new LambdaQueryWrapper<>();
+        tUserTeamQueryWrapper.eq(TUserTeam::getUid, user.getId())
+                .eq(TUserTeam::getState, 1);
+        return tUserTeamMapper.selectOne(tUserTeamQueryWrapper);
+    }
+
+    // 确定用户的团队状态
+    private Integer determineTeamState(TUsers user) {
+        LambdaQueryWrapper<TUserTeam> tUserTeamQueryWrapper = new LambdaQueryWrapper<>();
+        tUserTeamQueryWrapper.eq(TUserTeam::getUid, user.getId());
+        List<TUserTeam> tUserTeams = tUserTeamMapper.selectList(tUserTeamQueryWrapper);
+        if (tUserTeams.size() == 0) {
+            // 没有团队
+            return 0;
+        } else if (tUserTeams.size() == 1) {
+            TUserTeam tUserTeam = tUserTeams.get(0);
+            int state = Integer.parseInt(tUserTeam.getState());
+            if (state == 1) {
+                // 只有一个团队，刚好是当前团队
+                return 1;
+            } else if (state == 2) {
+                // 只有一个团队，是申请加入团队，还没同意
+                return 2;
+            } else if (state == 3) {
+                // 只有一个团队，是申请加入团队，被拒绝
+                return 3;
+            }
+        } else {
+            // 有多个团队，查询当前团队
+            tUserTeamQueryWrapper.eq(TUserTeam::getState, 1);
+            TUserTeam tUserTeam = tUserTeamMapper.selectOne(tUserTeamQueryWrapper);
+            return 1;
+        }
+        return null;
     }
 
 
@@ -251,14 +261,13 @@ public class AuthServiceImpl implements IAuthService {
         if (StringUtils.isBlank(s)) {
             return Result.failed("请先验证验证码");
         }
-        if (!SecretUtils.desEncrypt(userForm.getPassword()).equals(SecretUtils.desEncrypt(userForm.getCheckedPassword()))) {
+        if (!userForm.getPassword().equals(userForm.getCheckedPassword())) {
             return Result.failed("两次密码不一致");
         }
-
         TUsers user = tUsersConverter.fromToEntity(userForm);
-
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        // user.setRoleId(1);
+        user.setUsername(userForm.getUserName());
+        user.setRealname(userForm.getRealName());
         tUsersMapper.insert(user);
         // 注册成功把redis的是否通过校验验证码删除，防止用户注册后立马登录，还可以使用
         stringRedisTemplate.delete("isVerifyCode" + request.getSession().getId());
@@ -266,6 +275,4 @@ public class AuthServiceImpl implements IAuthService {
         registerVo.setUserId(user.getId());
         return Result.success("注册成功",registerVo);
     }
-
-
 }

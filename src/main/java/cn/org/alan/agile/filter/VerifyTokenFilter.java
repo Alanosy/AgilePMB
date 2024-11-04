@@ -46,16 +46,19 @@ public class VerifyTokenFilter extends OncePerRequestFilter {
     private ObjectMapper objectMapper;
     @Resource
     private AuthConverter authConverter;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         // 登录、注册、校验验证码、获取验证码、放行
         String uri = request.getRequestURI();
-        if (uri.contains("login") || uri.contains("verifyCode")
-                || uri.contains("captcha") || uri.contains("register")) {
+        if ((uri.contains("login") || uri.contains("verifyCode")
+                || uri.contains("captcha") || uri.contains("register"))
+                || uri.equals("/api/teams") || uri.equals("/api/teams/addTeam") ){
             doFilter(request, response, filterChain);
             return;
         }
+
         // 获取jwt令牌
         String authorization = request.getHeader("Authorization");
         // 判断是否为空
@@ -70,18 +73,6 @@ public class VerifyTokenFilter extends OncePerRequestFilter {
             return;
         }
         String id = request.getSession().getId();
-        System.out.println(id);
-
-        // 验证token在redis中是否存在，key使用sessionId
-        // if (Boolean.FALSE.equals(stringRedisTemplate.hasKey("token" + request.getSession().getId()))) {
-        //     responseUtil.response(response, Result.failed("token无效，请重新登录"));
-        //     return;
-        // }
-
-        // 自动续期
-        // stringRedisTemplate.expire("token" + request.getSession().getId(), 2, TimeUnit.HOURS);
-        // 从jwt 获取用户信息和权限
-
         // 反序列化token
         String userInfo = jwtUtil.getUser(authorization);
 

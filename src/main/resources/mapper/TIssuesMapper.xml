@@ -17,6 +17,12 @@
         id,name,type,
         content,createtime,priority
     </sql>
+    <update id="updateIssue">
+        update T_Issues i
+        set i.state = #{state}
+        where i.id = #{id}
+
+    </update>
     <select id="getIssue" resultType="cn.org.alan.agile.model.vo.issue.IssuesGetVo">
         SELECT i.id, i.type,i.`name` as issueName,i.priority,i.state,u.realname  as principalName,i.createtime,p.`name` as itemName,
         i.content,i.principalid,u2.realname as createName
@@ -25,7 +31,8 @@
         LEFT JOIN T_Users u2 ON u2.id = i.userid
         LEFT JOIN T_Projects p ON p.id = i.itemid
         <trim prefixOverrides="and" prefix="where">
-            i.itemid in (select tp.pid  FROM T_Team_Project tp WHERE tp.tid= #{teamId})
+            i.delete_flag = 0 and
+            i.teamId = #{teamId}
             <if test='type==1 and type!=null and type!=""'>
                 and i.principalid = #{userId}
             </if>

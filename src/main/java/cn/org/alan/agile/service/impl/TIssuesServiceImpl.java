@@ -2,8 +2,6 @@ package cn.org.alan.agile.service.impl;
 
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.converter.TIssuesConverter;
-import cn.org.alan.agile.model.entity.TRequirements;
-import cn.org.alan.agile.model.entity.TTasks;
 import cn.org.alan.agile.model.form.issue.IssueSaveForm;
 import cn.org.alan.agile.model.form.issue.IssueUpdateState;
 import cn.org.alan.agile.model.form.issue.UpdateIssueForm;
@@ -11,7 +9,6 @@ import cn.org.alan.agile.model.vo.issue.IssuesGetVo;
 import cn.org.alan.agile.util.SecurityUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.org.alan.agile.model.entity.TIssues;
@@ -47,6 +44,7 @@ public class TIssuesServiceImpl extends ServiceImpl<TIssuesMapper, TIssues> impl
         tIssues.setUserid(SecurityUtil.getUserId());
         tIssues.setEnddate(issueSaveForm.getEndDate());
         tIssues.setStartdate(issueSaveForm.getStartDate());
+        tIssues.setTeamid(SecurityUtil.getTeamId());
         int insert = tIssuesMapper.insert(tIssues);
         if(insert>0){
             return Result.success("保存成功");
@@ -88,8 +86,13 @@ public class TIssuesServiceImpl extends ServiceImpl<TIssuesMapper, TIssues> impl
     }
 
     @Override
-    public Result updateIssue(UpdateIssueForm updateIssueForm) {
-        return null;
+    public Result updateIssue(Long issueId, UpdateIssueForm updateIssueForm) {
+        updateIssueForm.setId(issueId);
+        int row = tIssuesMapper.updateIssue(updateIssueForm);
+        if(row>0){
+            return Result.success("修改成功");
+        }
+        return Result.failed("修改失败");
     }
 }
 

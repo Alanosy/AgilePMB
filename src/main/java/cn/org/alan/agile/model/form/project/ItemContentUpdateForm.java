@@ -2,6 +2,8 @@ package cn.org.alan.agile.model.form.project;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @Author Alan
  * @Version
@@ -12,6 +14,7 @@ public class ItemContentUpdateForm {
     /**
      * 项目id
      */
+    @NotNull(message = "项目id不能为空")
     private Long itemId;
     /**
      * 文档内容

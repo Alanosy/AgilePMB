@@ -8,5 +8,5 @@ import cn.org.alan.agile.model.vo.dashboard.DashBoardCountVo;
  * @Date 2024/8/22 11:54 PM
  */
 public interface TDashboardMapper {
-    DashBoardCountVo getCount( Long userId, Long teamId);
+    DashBoardCountVo getCount(Long userId, Long teamId);
 }

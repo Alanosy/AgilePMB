@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -23,6 +24,7 @@ public class ProjectSaveForm
     /**
      * 项目名称
      */
+    @NotBlank(message = "项目名称不能为空")
     private String name;
 
     /**

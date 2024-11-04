@@ -12,10 +12,10 @@ import java.util.Date;
  * @Version
  * @Date 2024/8/25 10:52 PM
  */
-@TableName(value ="T_Files")
+@TableName(value = "T_Files")
 @Data
 public class TFiles {
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String url;
     private Long userid;

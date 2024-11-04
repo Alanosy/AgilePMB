@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * @Date 2024/8/20 12:48 PM
  */
 @Component
-@Mapper(componentModel="spring")
+@Mapper(componentModel = "spring")
 public interface TRequirementsConverter {
 
     ReqGetVo entityToEV(TRequirements r);

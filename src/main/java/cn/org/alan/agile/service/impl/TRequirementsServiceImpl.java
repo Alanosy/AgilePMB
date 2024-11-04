@@ -3,15 +3,12 @@ package cn.org.alan.agile.service.impl;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.converter.TRequirementsConverter;
 import cn.org.alan.agile.model.form.requirement.ReqSaveForm;
+import cn.org.alan.agile.model.form.requirement.ReqUpdateForm;
 import cn.org.alan.agile.model.form.requirement.ReqUpdateState;
 import cn.org.alan.agile.model.vo.requirement.ReqGetVo;
-import cn.org.alan.agile.util.SecretUtils;
 import cn.org.alan.agile.util.SecurityUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.org.alan.agile.model.entity.TRequirements;
@@ -20,6 +17,10 @@ import cn.org.alan.agile.mapper.TRequirementsMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import java.time.LocalTime;
+
+import static java.time.LocalTime.now;
 
 /**
 * @author alan
@@ -46,6 +47,7 @@ public class TRequirementsServiceImpl extends ServiceImpl<TRequirementsMapper, T
         tRequirements.setPrincipalid(reqSaveForm.getPrincipalId());
         tRequirements.setState(reqSaveForm.getState());
         tRequirements.setUserid(SecurityUtil.getUserId());
+        tRequirements.setTeamid(SecurityUtil.getTeamId());
         int insert = tRequirementsMapper.insert(tRequirements);
         if(insert>0){
             return Result.success("保存成功");
@@ -83,7 +85,16 @@ public class TRequirementsServiceImpl extends ServiceImpl<TRequirementsMapper, T
             return Result.success("删除成功");
         }
         return Result.failed("删除失败");
+    }
 
+    @Override
+    public Result updateReq(Long reqId, ReqUpdateForm reqUpdateForm) {
+        reqUpdateForm.setId(reqId);
+        int row = tRequirementsMapper.updateReq(reqUpdateForm);
+        if(row>0){
+            return Result.success("修改成功");
+        }
+        return Result.failed("修改失败");
     }
 }
 

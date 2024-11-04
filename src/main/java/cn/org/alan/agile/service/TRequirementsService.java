@@ -3,6 +3,7 @@ package cn.org.alan.agile.service;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.entity.TRequirements;
 import cn.org.alan.agile.model.form.requirement.ReqSaveForm;
+import cn.org.alan.agile.model.form.requirement.ReqUpdateForm;
 import cn.org.alan.agile.model.form.requirement.ReqUpdateState;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,4 +21,6 @@ public interface TRequirementsService extends IService<TRequirements> {
     Result updateReqState(ReqUpdateState reqUpdateState);
 
     Result<String> delReq(Long reqId);
+
+    Result updateReq(Long reqId, ReqUpdateForm reqUpdateForm);
 }

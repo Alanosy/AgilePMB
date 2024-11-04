@@ -3,6 +3,7 @@ package cn.org.alan.agile.util;
 import cn.org.alan.agile.security.SysUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class SecurityUtil {
      * @return 用户id
      */
     public static Long getUserId(){
+        SecurityContext context = SecurityContextHolder.getContext();
         SysUserDetails user = (SysUserDetails) (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return user.getUser().getId();
     }

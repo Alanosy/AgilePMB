@@ -22,22 +22,25 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/issues")
 public class IssueController {
+
     @Resource
     private TIssuesService tIssuesService;
 
     /**
      * 添加问题
+     *
      * @param issueSaveForm
      * @return
      */
     @PostMapping
-    public Result<String> saveIssue(@RequestBody IssueSaveForm issueSaveForm){
-        Result  result = tIssuesService.saveIssue(issueSaveForm);
+    public Result<String> saveIssue(@RequestBody IssueSaveForm issueSaveForm) {
+        Result result = tIssuesService.saveIssue(issueSaveForm);
         return result;
     }
 
     /**
      * 分页查询问题列表
+     *
      * @param pageNum
      * @param pageSize
      * @param itemId
@@ -47,27 +50,29 @@ public class IssueController {
      */
     @GetMapping
     public Result<String> getIssue(@RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                 @RequestParam(value = "itemId", required = false) Integer itemId,
-                                @RequestParam(value = "issueType", required = false) String issueType,
-                               @RequestParam(value = "type",required = false) String type){
-        Result  result = tIssuesService.getIssue(pageNum,pageSize,itemId,issueType,type);
+                                   @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                   @RequestParam(value = "itemId", required = false) Integer itemId,
+                                   @RequestParam(value = "issueType", required = false) String issueType,
+                                   @RequestParam(value = "type", required = false) String type) {
+        Result result = tIssuesService.getIssue(pageNum, pageSize, itemId, issueType, type);
         return result;
     }
 
     /**
      * 修改表格中问题的状态
+     *
      * @param issueUpdateState
      * @return
      */
     @PutMapping("/updatestate")
-    public Result<String> updateIssueState(@RequestBody IssueUpdateState issueUpdateState){
-        Result  result = tIssuesService.updateIssueState(issueUpdateState);
+    public Result<String> updateIssueState(@RequestBody IssueUpdateState issueUpdateState) {
+        Result result = tIssuesService.updateIssueState(issueUpdateState);
         return result;
     }
 
     /**
      * 删除问题
+     *
      * @param issueId
      * @return
      */
@@ -76,9 +81,15 @@ public class IssueController {
         return tIssuesService.delIssue(issueId);
     }
 
-    @PutMapping
-    public Result updateIssue(@RequestBody UpdateIssueForm updateIssueForm){
-        Result  result = tIssuesService.updateIssue(updateIssueForm);
+    /**
+     * 修改问题
+     *
+     * @param updateIssueForm
+     * @return
+     */
+    @PutMapping("/{issueId}")
+    public Result updateIssue(@PathVariable("issueId") Long issueId, @RequestBody UpdateIssueForm updateIssueForm) {
+        Result result = tIssuesService.updateIssue(issueId, updateIssueForm);
         return result;
     }
 }

@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
+ * @Description
  * @Author Alan
  * @Version
  * @Date 2024/7/3 2:31 PM
@@ -30,32 +31,35 @@ public class UserController {
 
     /**
      * 用户选择
+     *
      * @return
      */
     @GetMapping("/fetchUsers")
-    public Result<List<fetchUsersVo>> fetchUsers(){
+    public Result<List<fetchUsersVo>> fetchUsers() {
         List<fetchUsersVo> usersList = tUsersService.fetchUsers();
-        return Result.success("请求成功",usersList);
+        return Result.success("请求成功", usersList);
     }
 
     /**
      * 个人信息
+     *
      * @return
      */
     @GetMapping("/myself-data")
-    public Result getMyselfData(){
-        Result  result = tUsersService.getMyselfData();
+    public Result getMyselfData() {
+        Result result = tUsersService.getMyselfData();
         return result;
     }
 
     /**
      * 修改个人信息
+     *
      * @param myselfDataPutForm
      * @return
      */
     @PutMapping("/updateMyselfData")
-    public Result updateMyselfData(@RequestBody MyselfDataPutForm myselfDataPutForm){
-        Result  result = tUsersService.updateMyselfData(myselfDataPutForm);
+    public Result updateMyselfData(@RequestBody MyselfDataPutForm myselfDataPutForm) {
+        Result result = tUsersService.updateMyselfData(myselfDataPutForm);
         return result;
     }
 

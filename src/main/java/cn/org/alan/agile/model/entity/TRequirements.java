@@ -16,7 +16,7 @@ public class TRequirements implements Serializable {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**

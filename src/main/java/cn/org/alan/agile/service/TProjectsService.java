@@ -2,10 +2,7 @@ package cn.org.alan.agile.service;
 
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.model.entity.TProjects;
-import cn.org.alan.agile.model.form.project.ItemContentUpdateForm;
-import cn.org.alan.agile.model.form.project.ProjectSaveForm;
-import cn.org.alan.agile.model.form.project.ProjectUpdateForm;
-import cn.org.alan.agile.model.form.project.RemarkSaveForm;
+import cn.org.alan.agile.model.form.project.*;
 import cn.org.alan.agile.model.vo.project.ProjectPageVo;
 import cn.org.alan.agile.model.vo.project.fetchProjectsVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -43,4 +40,6 @@ public interface TProjectsService extends IService<TProjects> {
     Result getFileList(Long itemId);
 
     Result updateProject(ProjectUpdateForm projectUpdateForm);
+
+    Result closeItem(ItemCloseForm itemCloseForm);
 }

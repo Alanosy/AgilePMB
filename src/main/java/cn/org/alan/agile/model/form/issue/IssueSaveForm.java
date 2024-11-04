@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -17,17 +18,26 @@ public class IssueSaveForm {
     /**
      * 问题名称
      */
+    @NotBlank(message = "标题不能为空")
     private String name;
 
+    /**
+     * 负责人
+     */
     private Long principalId;
+
+    /**
+     * 项目id
+     */
     private Long itemId;
+
     /**
      * 类型
      */
     private String type;
 
     /**
-     * 类型
+     * 状态
      */
     private String state;
 

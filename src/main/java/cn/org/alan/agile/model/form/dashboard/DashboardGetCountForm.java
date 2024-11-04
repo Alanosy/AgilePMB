@@ -2,6 +2,8 @@ package cn.org.alan.agile.model.form.dashboard;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @Author Alan
  * @Version
@@ -9,5 +11,6 @@ import lombok.Data;
  */
 @Data
 public class DashboardGetCountForm {
+    @NotNull(message = "团队ID不能为空")
     private Long teamId;
 }

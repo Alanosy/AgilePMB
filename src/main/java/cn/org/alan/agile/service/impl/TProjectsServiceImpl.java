@@ -3,18 +3,18 @@ package cn.org.alan.agile.service.impl;
 import cn.org.alan.agile.common.result.Result;
 import cn.org.alan.agile.mapper.TFilesMapper;
 import cn.org.alan.agile.mapper.TRemarksMapper;
+import cn.org.alan.agile.mapper.TTeamProjectMapper;
 import cn.org.alan.agile.model.entity.TFiles;
 import cn.org.alan.agile.model.entity.TRemarks;
-import cn.org.alan.agile.model.form.project.ItemContentUpdateForm;
-import cn.org.alan.agile.model.form.project.ProjectSaveForm;
-import cn.org.alan.agile.model.form.project.ProjectUpdateForm;
-import cn.org.alan.agile.model.form.project.RemarkSaveForm;
+import cn.org.alan.agile.model.entity.TTeamProject;
+import cn.org.alan.agile.model.form.project.*;
 import cn.org.alan.agile.model.vo.project.*;
 import cn.org.alan.agile.util.AliOSSUtil;
 import cn.org.alan.agile.util.SecurityUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.org.alan.agile.model.entity.TProjects;
@@ -45,6 +45,8 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
     private AliOSSUtil aliOSSUtil;
     @Resource
     private TFilesMapper tFilesMapper;
+    @Resource
+    private TTeamProjectMapper tTeamProjectMapper;
 
     @Override
     public Result<IPage<ProjectPageVo>> getItemPage(Integer pageNum, Integer pageSize, String itemName, Integer type) {
@@ -54,16 +56,24 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
     }
 
     @Override
+    @Transactional
     public Result saveItem(ProjectSaveForm projectSaveForm) {
         TProjects tProjects = new TProjects();
         tProjects.setName(projectSaveForm.getName());
         tProjects.setEnddate(projectSaveForm.getEnddate());
         tProjects.setStartdate(projectSaveForm.getStartdate());
         tProjects.setState(projectSaveForm.getState());
-        tProjects.setUserid(projectSaveForm.getUserid());
+        tProjects.setUserid(SecurityUtil.getUserId());
         tProjects.setTeamid(SecurityUtil.getTeamId());
         int insert = tProjectsMapper.insert(tProjects);
-        return Result.success("保存成功",insert);
+        TTeamProject tTeamProject = new TTeamProject();
+        tTeamProject.setPid(tProjects.getId());
+        tTeamProject.setTid(SecurityUtil.getTeamId());
+        int insert1 = tTeamProjectMapper.insert(tTeamProject);
+        if(insert>0){
+            return Result.success("保存成功",insert);
+        }
+        return Result.failed("保持失败");
     }
 
     @Override
@@ -77,7 +87,9 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
         OverviewItemGetVo result = tProjectsMapper.getOverviewItem(itemId);
         Integer reqPercent ;
         if(result.getReqNum()!=0){
-            reqPercent = (result.getReqfNum()/result.getReqNum())*100;
+            double reqfNum = result.getReqfNum();
+            double reqNum = result.getReqNum();
+            reqPercent =(int)((reqfNum / reqNum) * 100);
         }else {
             reqPercent = 0;
         }
@@ -85,14 +97,18 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
 
         Integer issuePercent ;
         if(result.getIssueNum()!=0){
-            issuePercent = (result.getIssuefNum()/result.getIssueNum())*100;
+            double issuefNum = result.getIssuefNum();
+            double issueNum = result.getIssueNum();
+            issuePercent = (int)((issuefNum / issueNum) * 100);
         }else {
             issuePercent = 0;
         }
         result.setIssuePercent(issuePercent);
         Integer taskPercent ;
         if(result.getTaskNum()!=0){
-            taskPercent = (result.getTaskfNum()/result.getTaskNum())*100;
+            double taskfNum = result.getTaskfNum();
+            double taskNum = result.getTaskNum();
+            taskPercent = (int)((taskfNum / taskNum) * 100);
         }else {
             taskPercent = 0;
         }
@@ -172,8 +188,29 @@ public class TProjectsServiceImpl extends ServiceImpl<TProjectsMapper, TProjects
 
     @Override
     public Result updateProject(ProjectUpdateForm projectUpdateForm) {
-        Integer result = tFilesMapper.updateProject(projectUpdateForm);
-        return Result.success("请求成功",result);
+        // 存在就修改，不存在就新增
+        LambdaUpdateWrapper<TProjects> tProjectsLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        tProjectsLambdaUpdateWrapper.eq(TProjects::getId,projectUpdateForm.getId());
+        TProjects tProjects = new TProjects();
+        tProjects.setState(projectUpdateForm.getState());
+        tProjects.setName(projectUpdateForm.getName());
+        tProjects.setStartdate(projectUpdateForm.getStartdate());
+        tProjects.setEnddate(projectUpdateForm.getEnddate());
+        tProjectsMapper.update(tProjects, tProjectsLambdaUpdateWrapper);
+        return Result.success("修改成功");
+    }
+
+    @Override
+    @Transactional
+    public Result closeItem(ItemCloseForm itemCloseForm) {
+        // Integer row = tProjectsMapper.closeItem(itemCloseForm);
+        Long itemId = itemCloseForm.getItemId();
+        tProjectsMapper.deleteProjectById(itemId);
+        tProjectsMapper.deleteIssuesByItemId(itemId);
+        tProjectsMapper.deleteRemarksByItemId(itemId);
+        tProjectsMapper.deleteRequirementsByItemId(itemId);
+        tProjectsMapper.deleteTaskByItemId(itemId);
+        return Result.success("关闭成功");
     }
 }
 

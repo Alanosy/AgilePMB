@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @Date 2024/8/22 5:41 PM
  */
 @Component
-@Mapper(componentModel="spring")
+@Mapper(componentModel = "spring")
 public interface TUsersConverter {
 
     TUsers fromToEntity(UserForm userForm);
