@@ -179,7 +179,12 @@ public class TTasksServiceImpl extends ServiceImpl<TTasksMapper, TTasks>
             tTasksMapper.update(tTasksLambdaUpdateWrapper);
 
         }
-        int row = tTasksMapper.updateTask(taskUpdateForm);
+
+        LambdaUpdateWrapper<TTasks> tTasksLambdaUpdateWrapper2 = new LambdaUpdateWrapper<>();
+        tTasksLambdaUpdateWrapper2.eq(TTasks::getId,taskId)
+               .set(TTasks::getState,taskUpdateForm.getState())
+                .set(TTasks::getUpdatetime,new Date());
+        int row = tTasksMapper.update(tTasksLambdaUpdateWrapper2);
         if(row>0){
             return Result.success("修改成功");
         }

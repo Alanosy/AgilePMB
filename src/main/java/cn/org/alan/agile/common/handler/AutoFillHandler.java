@@ -30,6 +30,6 @@ public class AutoFillHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        // 如果需要自动更新时间，可以在这里实现
+        this.strictUpdateFill(metaObject, "updatetime", Date.class, new Date());
     }
 }

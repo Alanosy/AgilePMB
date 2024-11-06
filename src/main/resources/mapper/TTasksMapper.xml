@@ -21,11 +21,7 @@
         plantime,type,createtime,
         priority,evaluation,userid
     </sql>
-    <update id="updateTask">
-        update T_Tasks t
-        set t.state = #{state}
-        where t.id = #{id}
-    </update>
+
     <select id="getTask" resultType="cn.org.alan.agile.model.vo.task.TaskGetVo">
         SELECT t.id,t.state,t.`name` as taskName,u.realname as principalName,t.endtime,t.finishtime,t.updatetime,t.createtime,t.content,u2.realname as createName,t.principalid as principalId
         FROM T_Tasks t
@@ -42,7 +38,7 @@
                 and t.userId = #{userId}
             </if>
             <if test='type==3 and type!=null and type!=""'>
-                and t.finishtime IS NULL OR r.endtime &lt; now()
+                and t.finishtime &lt; t.endtime
                 and t.principalid = #{userId}
             </if>
             <if test='itemId!=null and itemId!=""'>

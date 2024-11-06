@@ -35,7 +35,6 @@ public interface TTasksMapper extends BaseMapper<TTasks> {
 
     Integer getBurndownChart(Long itemId, Date date);
 
-    int updateTask(TaskUpdateForm taskUpdateForm);
 
     // List<String> getWeekTask();
 }
